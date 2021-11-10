@@ -1,6 +1,6 @@
 //Written by: Scott Schwager
 //sschwag@okstate.edu
-#Group G
+//Group G
 
 #include <stdio.h>
 
