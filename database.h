@@ -11,6 +11,26 @@
 
 #define MAX_ENTRIES 500
 
+void addSeller(Seller, SellerTable*);
+int loadSellers(SellerTable*);
+int saveSellers(SellerTable);
+
+void addCustomer(Customer, CustomerTable*);
+int loadCustomers(CustomerTable*);
+int saveCustomers(CustomerTable);
+
+void addProduct(Product, ProductTable*);
+int loadProducts(ProductTable*);
+int saveProducts(ProductTable);
+
+void addBilling(BillingInfo, BillingTable*);
+int loadBillings(BillingTable*);
+int saveBillings(BillingTable);
+
+void addOrder(Order, OrderTable*);
+int loadOrders(OrderTable*);
+int saveOrders(OrderTable)
+
 // database data definitions
 typedef struct sellerInformation 
 {
@@ -57,19 +77,19 @@ typedef struct customerOrder
 
 typedef struct sellerTable 
 {
-    Seller * sellers;
+    Seller * entries;
     int count;
 } SellerTable;
 
 typedef struct customerTable 
 {
-    Customer * customers;
+    Customer * entries;
     int count;
 } CustomerTable;
 
-typedef struct ProductTable 
+typedef struct productTable 
 {
-    Product * products;
+    Product * entries;
     int count;
 } ProductTable;
 
@@ -81,7 +101,7 @@ typedef struct billingTable
 
 typedef struct orderTable
 {
-    Order * orders;
+    Order * entries;
     int count;
 } OrderTable;
 

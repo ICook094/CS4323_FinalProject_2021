@@ -4,10 +4,10 @@
 
 #include "database.h"
 
-void addSeller(Seller newSeller, SellerTable * table)
+void addSeller(Seller toAdd, SellerTable * table)
 {
-    newSeller.sellerID = ++table->count;
-    table->sellers[table->count - 1] = newSeller;
+    toAdd.sellerID = ++table->count;
+    table->entries[table->count - 1] = toAdd;
 }
 
 int loadSellers(SellerTable * table)
@@ -32,7 +32,6 @@ int loadSellers(SellerTable * table)
 
             addSeller(newSeller, table);
         }
-        
     }
     else
     {
@@ -48,20 +47,80 @@ int saveSellers(SellerTable table)
     
     for(int i = 0; i < table.count; i++)
     {
-        if(table.sellers[i].sellerID == 0) break; //there should not be an id with a value of 0 or less
+        if(table.entries[i].sellerID == 0) break; //there should not be an id with a value of 0 or less
 
         char entry[500] = "";
         sprintf(entry, "%i,%s,%s,%s\n",
-            table.sellers[i].sellerID,
-            table.sellers[i].name,
-            table.sellers[i].phNumber,
-            table.sellers[i].address
+            table.entries[i].sellerID,
+            table.entries[i].name,
+            table.entries[i].phNumber,
+            table.entries[i].address
         );
 
         fputs(entry, sellerFile);
     }
 
     fclose(sellerFile);
+    return 0;
+}
+
+void addCustomer(Customer toAdd, CustomerTable * table)
+{
+    toAdd.customerID = ++table->count;
+    table->customers[table->count - 1] = toAdd;
+}
+
+int loadCustomers(CustomerTable * table)
+{
+    FILE * customerFile = fopen(CUSTOMERDB, "r"); // open the file in read mode
+    if(customerFile != NULL)
+    {
+        char entry[500];
+        while(fgets(entry, 500, customerFile))
+        {
+            char * token;
+            Customer newCustomer;
+
+            token = strtok(entry, ",");
+
+            token = strtok(NULL, ",");
+            strcpy(newCustomer.name, token);
+            token = strtok(NULL, ",");
+            strcpy(newCustomer.phNumber, token);
+            token = strtok(NULL, ",");
+            strcpy(newCustomer.address, token);
+
+            addCustomer(newCustomer, table);
+        }
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int saveCustomers(CustomerTable table)
+{
+    FILE * customerFile = fopen(CUSTOMERDB, "w"); // open the file in write mode
+    
+    for(int i = 0; i < table.count; i++)
+    {
+        if(table.entries[i].sellerID == 0) break; //there should not be an id with a value of 0 or less
+
+        char entry[500] = "";
+        sprintf(entry, "%i,%s,%s,%s\n",
+            table.entries[i].sellerID,
+            table.entries[i].name,
+            table.entries[i].phNumber,
+            table.entries[i].address
+        );
+
+        fputs(entry, customerFile);
+    }
+
+    fclose(customerFile);
     return 0;
 }
 
