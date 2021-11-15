@@ -43,19 +43,19 @@ int loadSellers(SellerTable * table)
 
 int saveSellers(SellerTable table)
 {
-    FILE * sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
-    
-    for(int i = 0; i < table.count; i++)
+    FILE *sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
+
+    for (int i = 0; i < table.count; i++)
     {
-        if(table.entries[i].sellerID == 0) break; //there should not be an id with a value of 0 or less
+        if (table.entries[i].sellerID == 0)
+            break; //there should not be an id with a value of 0 or less
 
         char entry[500] = "";
         sprintf(entry, "%i,%s,%s,%s\n",
-            table.entries[i].sellerID,
-            table.entries[i].name,
-            table.entries[i].phNumber,
-            table.entries[i].address
-        );
+                table.entries[i].sellerID,
+                table.entries[i].name,
+                table.entries[i].phNumber,
+                table.entries[i].address);
 
         fputs(entry, sellerFile);
     }
@@ -67,7 +67,7 @@ int saveSellers(SellerTable table)
 void addCustomer(Customer toAdd, CustomerTable * table)
 {
     toAdd.customerID = ++table->count;
-    table->customers[table->count - 1] = toAdd;
+    table->entries[table->count - 1] = toAdd;
 }
 
 int loadCustomers(CustomerTable * table)
@@ -107,11 +107,11 @@ int saveCustomers(CustomerTable table)
     
     for(int i = 0; i < table.count; i++)
     {
-        if(table.entries[i].sellerID == 0) break; //there should not be an id with a value of 0 or less
+        if(table.entries[i].customerID == 0) break; //there should not be an id with a value of 0 or less
 
         char entry[500] = "";
         sprintf(entry, "%i,%s,%s,%s\n",
-            table.entries[i].sellerID,
+            table.entries[i].customerID,
             table.entries[i].name,
             table.entries[i].phNumber,
             table.entries[i].address
@@ -124,12 +124,75 @@ int saveCustomers(CustomerTable table)
     return 0;
 }
 
+void addProduct(Product toAdd, ProductTable * table)
+{
+    toAdd.productID = ++table->count;
+    table->entries[table->count - 1] = toAdd;
+}
+
+int loadProducts(ProductTable * table)
+{
+    FILE * productFile = fopen(PRODUCTDB, "r"); // open the file in read mode
+    if(productFile != NULL)
+    {
+        char entry[500];
+        while(fgets(entry, 500, productFile))
+        {
+            char * token;
+            Product newProduct;
+
+            token = strtok(entry, ",");
+
+            token = strtok(NULL, ",");
+            strcpy(newProduct.description, token);
+            token = strtok(NULL, ",");
+            strcpy(newProduct.sellerID, token);
+            token = strtok(NULL, ",");
+            strcpy(newProduct.numAvailable, token);
+            token = strtok(NULL, ",");
+            newProduct.price = atof(token);
+
+            addProduct(newProduct, table);
+        }
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int saveProducts(ProductTable table)
+{
+    FILE * productFile = fopen(PRODUCTDB, "w"); // open the file in write mode
+    
+    for(int i = 0; i < table.count; i++)
+    {
+        if(table.entries[i].productID == 0) break; //there should not be an id with a value of 0 or less
+
+        char entry[500] = "";
+        sprintf(entry, "%i,%s,%s,%s,%d\n",
+            table.entries[i].productID,
+            table.entries[i].description,
+            table.entries[i].sellerID,
+            table.entries[i].numAvailable,
+            table.entries[i].price
+        );
+
+        fputs(entry, productFile);
+    }
+
+    fclose(productFile);
+    return 0;
+}
+
 int main(int argc, char const *argv[])
 {
     SellerTable sellerTable;
     sellerTable.count = 0;
 
-    sellerTable.sellers = malloc(sizeof(Seller) * MAX_ENTRIES);
+    sellerTable.entries = malloc(sizeof(Seller) * MAX_ENTRIES);
 
     // Seller newSeller;
     // strcpy(newSeller.name, "Cole Hutson");
@@ -146,11 +209,11 @@ int main(int argc, char const *argv[])
 
     // saveSellers(sellerTable);
 
-    loadSellers(&sellerTable);
+    //loadSellers(&sellerTable);
     
     for(int i = 0; i < sellerTable.count; i++)
     {
-        printf("%s\n", sellerTable.sellers[i].name);
+        printf("%s\n", sellerTable.entries[i].name);
     }
     
     return 0;
