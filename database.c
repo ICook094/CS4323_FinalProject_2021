@@ -4,6 +4,13 @@
 
 #include "database.h"
 
+SellerTable * initSellers()
+{
+    SellerTable * table = malloc(sizeof(SellerTable));
+    table->count = 0;
+    table->entries = malloc(sizeof(Seller) * MAX_ENTRIES);
+}
+
 void addSeller(Seller toAdd, SellerTable * table)
 {
     toAdd.sellerID = ++table->count;
@@ -28,6 +35,7 @@ int loadSellers(SellerTable * table)
             token = strtok(NULL, ",");
             strcpy(newSeller.phNumber, token);
             token = strtok(NULL, ",");
+            token[strlen(token) - 1] = '\0';
             strcpy(newSeller.address, token);
 
             addSeller(newSeller, table);
@@ -62,6 +70,13 @@ int saveSellers(SellerTable table)
 
     fclose(sellerFile);
     return 0;
+}
+
+CustomerTable * initCustomers()
+{
+    CustomerTable * table = malloc(sizeof(table));
+    table->count = 0;
+    table->entries = malloc(sizeof(Customer) * MAX_ENTRIES);
 }
 
 void addCustomer(Customer toAdd, CustomerTable * table)
@@ -124,6 +139,13 @@ int saveCustomers(CustomerTable table)
     return 0;
 }
 
+ProductTable * initProducts()
+{
+    ProductTable * table = malloc(sizeof(Product));
+    table->count = 0;
+    table->entries = malloc(sizeof(Product) * MAX_ENTRIES);
+}
+
 void addProduct(Product toAdd, ProductTable * table)
 {
     toAdd.productID = ++table->count;
@@ -146,9 +168,9 @@ int loadProducts(ProductTable * table)
             token = strtok(NULL, ",");
             strcpy(newProduct.description, token);
             token = strtok(NULL, ",");
-            strcpy(newProduct.sellerID, token);
+            newProduct.sellerID = atoi(token);
             token = strtok(NULL, ",");
-            strcpy(newProduct.numAvailable, token);
+            newProduct.numAvailable = atoi(token);
             token = strtok(NULL, ",");
             newProduct.price = atof(token);
 
@@ -187,34 +209,138 @@ int saveProducts(ProductTable table)
     return 0;
 }
 
-int main(int argc, char const *argv[])
+BillingTable * initBillings()
 {
-    SellerTable sellerTable;
-    sellerTable.count = 0;
+    BillingTable * table = malloc(sizeof(BillingTable));
+    table->count = 0;
+    table->entries = malloc(sizeof(BillingInfo) * MAX_ENTRIES);
+}
 
-    sellerTable.entries = malloc(sizeof(Seller) * MAX_ENTRIES);
+void addBilling(BillingInfo toAdd, BillingTable * table)
+{
+    table->entries[table->count - 1] = toAdd;
+}
 
-    // Seller newSeller;
-    // strcpy(newSeller.name, "Cole Hutson");
-    // strcpy(newSeller.phNumber, "918-616-3623");
-    // strcpy(newSeller.address,"1913 E elm Ave");
-
-    // addSeller(newSeller, &sellerTable);
-
-    // strcpy(newSeller.name, "Jimbob Bopete");
-    // strcpy(newSeller.phNumber, "405-576-8672");
-    // strcpy(newSeller.address,"520 S GoldMine Rd");
-
-    // addSeller(newSeller, &sellerTable);
-
-    // saveSellers(sellerTable);
-
-    //loadSellers(&sellerTable);
-    
-    for(int i = 0; i < sellerTable.count; i++)
+int loadBillings(BillingTable * table)
+{
+    FILE * billingFile = fopen(BILLINGDB, "r"); // open the file in read mode
+    if(billingFile != NULL)
     {
-        printf("%s\n", sellerTable.entries[i].name);
+        char entry[500];
+        while(fgets(entry, 500, billingFile))
+        {
+            char * token;
+            BillingInfo newBilling;
+
+            token = strtok(entry, ",");
+
+            token = strtok(NULL, ",");
+            newBilling.orderID = atoi(token);
+            token = strtok(NULL, ",");
+            newBilling.customerID = atoi(token);
+            token = strtok(NULL, ",");
+            strcpy(newBilling.billingAddress, token);
+            token = strtok(NULL, ",");
+            newBilling.orderPrice = atof(token);
+
+            addBilling(newBilling, table);
+        }
     }
-    
+    else
+    {
+        return -1;
+    }
+
     return 0;
 }
+
+int saveBillings(BillingTable table)
+{
+    FILE * billingFile = fopen(BILLINGDB, "w"); // open the file in write mode
+    
+    for(int i = 0; i < table.count; i++)
+    {
+        char entry[500] = "";
+        sprintf(entry, "%i,%d,%s,%d\n",
+            table.entries[i].orderID,
+            table.entries[i].customerID,
+            table.entries[i].billingAddress,
+            table.entries[i].orderPrice
+        );
+
+        fputs(entry, billingFile);
+    }
+
+    fclose(billingFile);
+    return 0;
+}
+
+OrderTable * initOrders()
+{
+    OrderTable * table = malloc(sizeof(OrderTable));
+    table->count = 0;
+    table->entries = malloc(sizeof(Order) * MAX_ENTRIES);
+}
+
+void addOrder(Order toAdd, OrderTable * table)
+{
+    toAdd.orderID = ++table->count;
+    table->entries[table->count - 1] = toAdd;
+}
+
+int loadOrders(OrderTable * table)
+{
+    FILE * orderFile = fopen(ORDERDB, "r"); // open the file in read mode
+    if(orderFile != NULL)
+    {
+        char entry[500];
+        while(fgets(entry, 500, orderFile))
+        {
+            char * token;
+            Order newOrder;
+
+            token = strtok(entry, ",");
+
+            token = strtok(NULL, ",");
+            newOrder.productID = atoi(token);
+            token = strtok(NULL, ",");
+            newOrder.numPurchased = atoi(token);
+            token = strtok(NULL, ",");
+            strcpy(newOrder.deliveryAddress, token);
+            token = strtok(NULL, ",");
+            newOrder.totalPrice = atof(token);
+
+            addOrder(newOrder, table);
+        }
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int saveOrders(OrderTable table)
+{
+    FILE * orderFile = fopen(ORDERDB, "w"); // open the file in write mode
+    
+    for(int i = 0; i < table.count; i++)
+    {
+        char entry[500] = "";
+        sprintf(entry, "%i,%d,%d,%s,%d\n",
+            table.entries[i].orderID,
+            table.entries[i].productID,
+            table.entries[i].numPurchased,
+            table.entries[i].deliveryAddress,
+            table.entries[i].totalPrice
+        );
+
+        fputs(entry, orderFile);
+    }
+
+    fclose(orderFile);
+    return 0;
+}
+
+

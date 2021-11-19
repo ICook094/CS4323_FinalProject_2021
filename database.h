@@ -48,7 +48,7 @@ typedef struct billingInformation
 typedef struct customerOrder
 {
     int orderID;
-    int profuctID;
+    int productID;
     int numPurchased;
     char deliveryAddress[100]; // the customers address
     double totalPrice;
@@ -85,22 +85,28 @@ typedef struct orderTable
     int count;
 } OrderTable;
 
+SellerTable * initSellers();
 void addSeller(Seller, SellerTable*);
 int loadSellers(SellerTable*);
 int saveSellers(SellerTable);
+Seller getSeller(int, SellerTable*);
 
+CustomerTable * initCustomers();
 void addCustomer(Customer, CustomerTable*);
 int loadCustomers(CustomerTable*);
 int saveCustomers(CustomerTable);
 
+ProductTable * initProducts();
 void addProduct(Product, ProductTable*);
 int loadProducts(ProductTable*);
 int saveProducts(ProductTable);
 
+BillingTable * initBillings();
 void addBilling(BillingInfo, BillingTable*);
 int loadBillings(BillingTable*);
 int saveBillings(BillingTable);
 
+OrderTable * initOrders();
 void addOrder(Order, OrderTable*);
 int loadOrders(OrderTable*);
 int saveOrders(OrderTable);
