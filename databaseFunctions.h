@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "database.h"
 #include "database.c"
 
@@ -11,11 +13,11 @@ Customer customerInfo;
 
 void startupStructures(){
     //initialize structures that hold all the information
-    initBillings();
-    initCustomers();
-    initOrders();
-    initProducts();
-    initSellers();
+    tableOfBillings = initBillings();
+    tableOfCustomers = initCustomers();
+    tableOfOrders = initOrders();
+    tableOfProducts = initProducts();
+    tableOfSellers = initSellers();
     
 
     loadBillings(tableOfBillings);
@@ -151,7 +153,30 @@ void updateProductPrice(int productID, int newPrice){
 //TODO
 //replace case one in showSellerMenu() maybe make global seller struct
 void updateSellerInformation(){
+    printf("What information would you like to update?\n");
+    printf("\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+    
+    char token[15];
+    fgets(token, 15, stdin);
 
+    if(token[0] == '1')
+    {
+        printf("What would you like to change it to?");
+        bzero(token, 15);
+        
+    }
+    if(token[0] == '2')
+    {
+        
+    }
+    if(token[0] == '3')
+    {
+        
+    }
+    else
+    {
+        printf("Invalid Input. Try Again.\n");
+    }
 }
 
 //TODO
@@ -222,14 +247,54 @@ void viewBillingInfo(int customerID, int soc_conn){
     }
 }
 
-void viewOrdersForMyProducts(){
-
-}
-
 void viewProductsAvailable(){
     //print out all available products and their quantity and price
+    for(int i = 0; i < tableOfProducts->count; i++)
+    {
+        Product product = tableOfProducts->entries[i];
+        printf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+                product.productID,
+                product.numAvailable,
+                product.price,
+                product.description
+                );
+    }
 }
 
-void viewMyProducts(){
-    //for all products if sellerID matches the print out
+void viewProductsForSeller(int sellerID){
+
+    //for all products if sellerID matches then print out
+    for(int i = 0; i < tableOfProducts->count; i++)
+    {
+        if(tableOfProducts->entries[i].sellerID == sellerID) // check to see if the seller with selleID listed this product
+        {
+            Product product = tableOfProducts->entries[i]; // get product information
+
+            printf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+                product.productID,
+                product.numAvailable,
+                product.price,
+                product.description
+                );
+        }
+    }
+}
+
+void viewOrdersForProducts(int productID)
+{
+    //for all products if sellerID matches then print out
+    for(int i = 0; i < tableOfOrders->count; i++)
+    {
+        if(tableOfOrders->entries[i].productID == productID)
+        {
+            Order order = tableOfOrders->entries[i]; // get product with billing information
+
+            printf("Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\n\nDelivery Address: %s",
+                order.orderID,
+                order.numPurchased,
+                order.totalPrice,
+                order.deliveryAddress
+                );
+        }
+    }
 }
