@@ -86,28 +86,28 @@ typedef struct orderTable
 } OrderTable;
 
 SellerTable * initSellers();
-void addSeller(Seller, SellerTable*);
+void addSellerToTable(Seller, SellerTable*);
 int loadSellers(SellerTable*);
 int saveSellers(SellerTable);
 Seller getSeller(int, SellerTable*);
 
 CustomerTable * initCustomers();
-void addCustomer(Customer, CustomerTable*);
+void addCustomerToTable(Customer, CustomerTable*);
 int loadCustomers(CustomerTable*);
 int saveCustomers(CustomerTable);
 
 ProductTable * initProducts();
-void addProduct(Product, ProductTable*);
+void addProductToTable(Product, ProductTable*);
 int loadProducts(ProductTable*);
 int saveProducts(ProductTable);
 
 BillingTable * initBillings();
-void addBilling(BillingInfo, BillingTable*);
+void addBillingToTable(BillingInfo, BillingTable*);
 int loadBillings(BillingTable*);
 int saveBillings(BillingTable);
 
 OrderTable * initOrders();
-void addOrder(Order, OrderTable*);
+void addOrderToTable(Order, OrderTable*);
 int loadOrders(OrderTable*);
 int saveOrders(OrderTable);
 

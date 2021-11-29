@@ -13,7 +13,7 @@ SellerTable * initSellers()
 
 void addSellerToTable(Seller toAdd, SellerTable * table)
 {
-    toAdd.sellerID = ++table->count;
+    toAdd.sellerID = table->count++;
     table->entries[table->count - 1] = toAdd;
 }
 
@@ -81,7 +81,7 @@ CustomerTable * initCustomers()
 
 void addCustomerToTable(Customer toAdd, CustomerTable * table)
 {
-    toAdd.customerID = ++table->count;
+    toAdd.customerID = table->count++;
     table->entries[table->count - 1] = toAdd;
 }
 
@@ -148,7 +148,7 @@ ProductTable * initProducts()
 
 void addProductToTable(Product toAdd, ProductTable * table)
 {
-    toAdd.productID = ++table->count;
+    toAdd.productID = table->count++;
     table->entries[table->count - 1] = toAdd;
 }
 
@@ -193,8 +193,8 @@ int saveProducts(ProductTable table)
     {
         if(table.entries[i].productID == 0) break; //there should not be an id with a value of 0 or less
 
-        char entry[500] = "";
-        sprintf(entry, "%i,%s,%s,%s,%d\n",
+        char entry[1000] = "";
+        sprintf(entry, "%i,%s,%i,%i,%f\n",
             table.entries[i].productID,
             table.entries[i].description,
             table.entries[i].sellerID,
@@ -261,7 +261,7 @@ int saveBillings(BillingTable table)
     for(int i = 0; i < table.count; i++)
     {
         char entry[500] = "";
-        sprintf(entry, "%i,%d,%s,%d\n",
+        sprintf(entry, "%i,%d,%s,%f\n",
             table.entries[i].orderID,
             table.entries[i].customerID,
             table.entries[i].billingAddress,
@@ -284,7 +284,7 @@ OrderTable * initOrders()
 
 void addOrderToTable(Order toAdd, OrderTable * table)
 {
-    toAdd.orderID = ++table->count;
+    toAdd.orderID = table->count++;
     table->entries[table->count - 1] = toAdd;
 }
 
@@ -327,8 +327,8 @@ int saveOrders(OrderTable table)
     
     for(int i = 0; i < table.count; i++)
     {
-        char entry[500] = "";
-        sprintf(entry, "%i,%d,%d,%s,%d\n",
+        char entry[1000] = "";
+        sprintf(entry, "%i,%d,%d,%s,%f\n",
             table.entries[i].orderID,
             table.entries[i].productID,
             table.entries[i].numPurchased,
