@@ -1,15 +1,5 @@
-/*Sagar Sawant 
-*Group G
-*A11524117
-*sagar.sawant@okstate.edu
-*Description: This is a header file which includes all the header files
-*that are being used by all the .c files
-*
-**/
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <netdb.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -17,10 +7,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <pthread.h>
-#define MAX 1024
-#define MAXLINE 1024
-#define SERVER_LEN 255
-#define SA struct sockaddr
 
 struct serv_info{
 
@@ -64,3 +50,7 @@ int chk_space(int * verify, int length){
 
         return -1;
 }
+
+void * handler_serv(void * h);
+
+void buyerOrSeller(int soc_conn);

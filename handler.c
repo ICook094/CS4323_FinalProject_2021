@@ -1,15 +1,10 @@
-/*Sagar Sawant 
-*Group G
-*A11524117
-*sagar.sawant@okstate.edu
-*Description: This is the handler code for server and client which 
-*handles the communication between the two
-**/
-
 #include "global.h"
+#define MAXLINE 1024
+//Server thread
+//Each client will get a separate Server thread to communicate
 
 void * handler_cli(void * h){
-
+		//printf("Handling client...\n");
         struct cli_info * info_c = (struct cli_info *)h;
         char msg[1024];
         int soc_conn = info_c->conn_start;
@@ -17,8 +12,25 @@ void * handler_cli(void * h){
         int recv_sz = 0;
         int port = info_c->port;
         char * IPaddr = info_c->IPaddr;
-
-
+		
+		//Sends the execution to servermenu.c to navigate through the menus
+		buyerOrSeller(soc_conn);	//This function is in servermenu.c
+		//When the user is done in the menus, the execution will return here
+		//We need the execution to return here so the code below can close the connection and free up memory
+		
+		
+		printf("started closing things\n");
+		close(soc_conn);
+        info_c->verify[m] = -1;
+        info_c->verify = NULL;
+        free(info_c);
+        pthread_exit(NULL);
+		printf("done closing everything\n");
+}
+/*
+		//Below is Sagar's server menu execution code. I commented it out and used my code for this in servermenu.c because...
+		//...I thought it would be better to have a separate file for that. -Scott
+		
         memset(msg, '\0', 1024);
 		sprintf(msg, "\n1. Seller\n2. Buyer\n3. Exit the program\n\nEnter your choice ");
 		send(soc_conn, msg, strlen(msg), 0);
@@ -84,14 +96,7 @@ void * handler_cli(void * h){
 				
 
      }
-
-        close(soc_conn);
-        info_c->verify[m] = -1;
-        info_c->verify = NULL;
-        free(info_c);
-        pthread_exit(NULL);
-
-}
+*/
 
 void * handler_serv(void * h){
 
@@ -108,6 +113,8 @@ void * handler_serv(void * h){
         char msg[MAXLINE];
         struct sockaddr_in addr_s, addr_c;
 
+        // Creating socket file descriptor
+
         if ( (fd_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0 ) {
                 perror("socket creation failed");
                 exit(EXIT_FAILURE);
@@ -116,11 +123,12 @@ void * handler_serv(void * h){
         memset(&addr_s, 0, sizeof(addr_s));
         memset(&addr_c, 0, sizeof(addr_c));
 
-        addr_s.sin_family = AF_INET;
-        addr_s.sin_addr.s_addr = INADDR_ANY;
-        addr_s.sin_port = htons(port); 
+        // Filling server information
+        addr_s.sin_family = AF_INET; // IPv4
+        addr_s.sin_addr.s_addr = INADDR_ANY;//IP
+        addr_s.sin_port = htons(port); //Port
 
-       
+        // Bind the socket with the server address
         if ( bind(fd_socket, (const struct sockaddr *)&addr_s, sizeof(addr_s)) < 0 )
         {
                 perror("bind failed");
