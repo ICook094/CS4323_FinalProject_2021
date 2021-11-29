@@ -6,6 +6,8 @@ CustomerTable * tableOfCustomers;
 OrderTable * tableOfOrders;
 ProductTable * tableOfProducts;
 SellerTable * tableOfSellers;
+Seller sellerInfo;
+Customer customerInfo;
 
 void startupStructures(){
     //initialize structures that hold all the information
@@ -64,7 +66,7 @@ void newBilling(){
     addBillingToTable(newBill, tableOfBillings);
 }
 
-//TODO
+
 //return a product option 3 in showBuyerMenu
 //delete order and billing struct
 //return products to availability
