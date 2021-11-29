@@ -15,16 +15,15 @@ void comms(int soc_conn)
     char msg[MAX];
     int n;
 	
-	
-    for (;;) {
+	//changed to while - was not looping more than twice
+    while (1) {
         bzero(msg, sizeof(msg));
         read(soc_conn, msg, sizeof(msg));
-        
         if ((strncmp(msg, "exit", 4)) == 0) {
             printf("Client Disconnected....\n");
             break;
-        } else if ((strncmp(msg, "input", 5)) == 0) {	//This is when the server asks for input
-			bzero(msg, sizeof(msg));
+        } else if ((strncmp(msg, "input", 6)) == 0) {	//This is when the server asks for input
+            bzero(msg, sizeof(msg));
 			scanf("%s", msg);
 			//printf("%s\n", msg);		//For troubleshooting
 			write(soc_conn, msg, sizeof(msg));
@@ -43,8 +42,6 @@ void comms(int soc_conn)
 
 int main(int argc, char * argv[])
 {
-	printf("Please enter your name: ");
-	scanf ("%s", name);
     int soc_conn;
     struct sockaddr_in add_serv, cli;
     char serv_name[SERVER_LEN + 1] = {0};
@@ -52,7 +49,7 @@ int main(int argc, char * argv[])
 
     port_num = argc > 2 ? atoi(argv[2]) : 0;
 	 if (!port_num) {
-        printf("\n\n%s Please enter Server port: ", name);
+        printf("Please enter Server port: ");
         scanf("%d", &port_num);
     }
 

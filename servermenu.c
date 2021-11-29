@@ -40,7 +40,7 @@ void buyerOrSeller(int soc_conn) {
 	
 	if (option == 1) {
 		printf("Buyer\n");
-		getUserInfo("Buyer", soc_conn);
+		getUserInfo("Buyer ", soc_conn);
 		showBuyerMenu(soc_conn);
 	} else {
 		printf("Seller\n");
@@ -60,7 +60,7 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	
 	char msg[1024];
 	char userName[50];
-	char userPhone[12];
+	char userPhone[50];
 	char userAddress[50];
 
 	//Get userName
@@ -72,15 +72,16 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	read(soc_conn, msg, sizeof(msg));
 	strcpy(userName, msg);
 
-	if(userRole == "Buyer"){
-		//Does user already exist as a buyer:
-		if (checkCustomerExists(userName)){
-			writeNoInput(soc_conn, "Your name was found in the database.\n");
-		}
-
-	} else { //Seller
+	if(strcmp(userRole, "Seller") == 0){
 		//Does user already exist as a seller:
 		if (checkSellerExists(userName)){
+			writeNoInput(soc_conn, "Your name was found in the database.\n");
+			return;
+		}
+
+	} else { //Customer
+		//Does user already exist as a custmer:
+		if (checkCustomerExists(userName)){
 			writeNoInput(soc_conn, "Your name was found in the database.\n");
 			return;
 		}
@@ -90,7 +91,7 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	bzero(msg, sizeof(msg));
 	strcat(msg, "Phone XXX-XXX-XXXX:\n");
 	write(soc_conn, msg, sizeof(msg));
-	write(soc_conn, "input", sizeof("input"));	//Ask for input from client
+	write(soc_conn, "input", sizeof("input")); //Ask for input from client
 	bzero(msg, sizeof(msg));
 	read(soc_conn, msg, sizeof(msg));
 	strcpy(userPhone, msg);
@@ -105,6 +106,7 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	strcpy(userAddress, msg);
 
 	if(userRole == "Buyer"){
+		printf("save address");
 		strcpy(customerInfo.name, userName);
 		strcpy(customerInfo.phNumber, userPhone);
 		strcpy(customerInfo.address, userAddress);
@@ -155,6 +157,7 @@ void showSellerMenu(int soc_conn) {
 		write(soc_conn, "input", sizeof("input"));	//Ask for input from client
 		bzero(msg, sizeof(msg));
 		read(soc_conn, msg, sizeof(msg));
+		printf("%s", msg);
 		switch(atoi(msg)) {
 			case 1:
 				bzero(msg, sizeof(msg));
@@ -207,6 +210,7 @@ void showSellerMenu(int soc_conn) {
 				write(soc_conn, msg, sizeof(msg));
 				break;
 			case 8:
+				saveStructuresToFiles();
 				write(soc_conn, "exit", sizeof("exit"));
 				done = 1;
 				break;
@@ -272,6 +276,7 @@ void showBuyerMenu(int soc_conn) {
 				printf("This is your billing information:\n");
 				break;
 			case 7:
+				saveStructuresToFiles();
 				write(soc_conn, "exit", sizeof("exit"));
 				done = 1;
 				break;
