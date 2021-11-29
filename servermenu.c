@@ -5,8 +5,11 @@
 
 //#include "global.h"
 #include "addNewProduct.h"
+#include "databaseFunctions.h"
 #include <stdio.h>
 #include <string.h>
+
+void writeNoInput(int soc_conn, char writeThis[1024]);
 
 void buyerOrSeller(int soc_conn) {
 	
@@ -52,20 +55,10 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	//This function is called by buyerOrSeller()
 	
 	char msg[1024];
-	char userId[50];
 	char userName[50];
 	char userPhone[12];
 	char userAddress[50];
-	
-	//Get userId
-	bzero(msg, sizeof(msg));
-	strcat(msg, "ID:\n");
-	write(soc_conn, msg, sizeof(msg));
-	write(soc_conn, "input", sizeof("input"));	//Ask for input from client
-	bzero(msg, sizeof(msg));
-	read(soc_conn, msg, sizeof(msg));
-	strcpy(userId, msg);
-	
+
 	//Get userName
 	bzero(msg, sizeof(msg));
 	strcat(msg, "Name:\n");
@@ -74,6 +67,20 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	bzero(msg, sizeof(msg));
 	read(soc_conn, msg, sizeof(msg));
 	strcpy(userName, msg);
+
+	if(userRole == "Buyer"){
+		//Does user already exist as a buyer:
+		if (checkCustomerExists(userName)){
+			writeNoInput(soc_conn, "Your name was found in the database.\n");
+		}
+
+	} else { //Seller
+		//Does user already exist as a seller:
+		if (checkSellerExists(userName)){
+			writeNoInput(soc_conn, "Your name was found in the database.\n");
+			return;
+		}
+	}
 	
 	//Get userPhone
 	bzero(msg, sizeof(msg));
@@ -92,7 +99,21 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	bzero(msg, sizeof(msg));
 	read(soc_conn, msg, sizeof(msg));
 	strcpy(userAddress, msg);
-	
+
+	if(userRole == "Buyer"){
+		strcpy(customerInfo.name, userName);
+		strcpy(customerInfo.phNumber, userPhone);
+		strcpy(customerInfo.address, userAddress);
+
+		addCustomerToTable(customerInfo, tableOfCustomers);
+	} else { //Seller
+		strcpy(sellerInfo.name, userName);
+		strcpy(sellerInfo.phNumber, userPhone);
+		strcpy(sellerInfo.address, userAddress);
+
+		addSellerToTable(sellerInfo, tableOfSellers);
+	}
+
 	return;
 	
 	/*if (strcmp(userRole, "Buyer") == 0) {

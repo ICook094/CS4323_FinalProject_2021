@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "unistd.h"
 #include "database.h"
 #include "database.c"
@@ -61,7 +63,6 @@ int checkCustomerExists(char name[]){
     return 0;
 }
 
-//TODO
 //purchase a product option 2 in showBuyerMenu
 void newOrder(int productID, int quantity){
     Order newOrder;
@@ -89,7 +90,16 @@ void newOrder(int productID, int quantity){
 //return a product option 3 in showBuyerMenu
 //delete order and billing struct
 //return products to availability
-void returnOrder(Order orderToReturn){
+void returnOrder(int orderID){
+    Order orderToReturn;
+    int orderCount = tableOfOrders->count;
+    for (int i = 0; i < orderCount; i++){
+        if(tableOfOrders->entries[i].orderID == orderID){
+            orderToReturn = tableOfOrders->entries[i];
+            break;
+        }
+    }
+
     //return products purshased to products available
     int productCount = tableOfProducts->count;
     for (int i = 0; i < productCount; i++){
@@ -123,8 +133,7 @@ void returnOrder(Order orderToReturn){
 
 }
 
-//TODO
-void addNewProduct(int soc_conn){
+void addProduct(int soc_conn){
     Product newProduct;
 
     char msg[1024];
@@ -140,7 +149,7 @@ void addNewProduct(int soc_conn){
 
     //ask client for number of product available
     bzero(msg,sizeof(msg));
-    strcat(msg, "\nEnter the quantity of the product that is available\n");
+    strcat(msg, "\nEnter the quantity of the product that is available:\n");
     write(soc_conn, msg, sizeof(msg));
     //ask for user input from the client
     write(soc_conn, "input", sizeof("input"));
@@ -152,6 +161,18 @@ void addNewProduct(int soc_conn){
     
     //enter price
     bzero(msg, sizeof(msg));
+    strcat(msg, "\nEnter the price of the product:\n");
+    write(soc_conn, msg, sizeof(msg));
+    //ask user for input from the client
+    write(soc_conn, "input", sizeof("input"));
+    bzero(msg, sizeof(msg));
+    read(soc_conn, msg, sizeof(msg));
+    double price = atof(msg);
+    newProduct.price = price;
+
+    //assign the sellerID
+    newProduct.sellerID = sellerInfo.sellerID;
+
     addProductToTable(newProduct, tableOfProducts);
 }
 
@@ -348,7 +369,7 @@ void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
             char msg[1024];
             bzero(msg, sizeof(msg));
 
-            sprintf(msg, "\nOrderID: %d \nProductID: %d \nAmount of Product Purchased: %d \nDeliverAddress: %s \nTotal Price %d\n\n",
+            sprintf(msg, "\nOrderID: %d \nProductID: %d \nAmount of Product Purchased: %d \nDeliverAddress: %s \nTotal Price %f\n\n",
                 tableOfOrders->entries[i].orderID, 
                 tableOfOrders->entries[i].productID,
                 tableOfOrders->entries[i].numPurchased,
@@ -370,7 +391,7 @@ void viewBillingInfo(int customerID, int soc_conn){
             char msg[1024];
             bzero(msg, sizeof(msg));
 
-            sprintf(msg, "\nOrderID: %d \nProductID: %d \nBilling Adress: %s \nOrder Price %d\n\n",
+            sprintf(msg, "\nOrderID: %d \nProductID: %d \nBilling Adress: %s \nOrder Price %f\n\n",
                 tableOfBillings->entries[i].orderID,
                 tableOfBillings->entries[i].customerID,
                 tableOfBillings->entries[i].billingAddress,
@@ -397,7 +418,6 @@ void viewProductsAvailable(){
 }
 
 void viewProductsForSeller(int sellerID, int soc_conn){
-
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
     {

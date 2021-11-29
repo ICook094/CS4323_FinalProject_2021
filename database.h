@@ -31,7 +31,7 @@ typedef struct customerInformation
 typedef struct productInformation
 {
     int productID; //primary key
-    char description[500];
+    char description[300];
     int sellerID; //foreign key to seller database
     int numAvailable;
     double price;
