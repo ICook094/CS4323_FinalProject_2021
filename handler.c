@@ -1,4 +1,5 @@
 #include "global.h"
+//#include "databaseFunctions.h"
 #define MAXLINE 1024
 //Server thread
 //Each client will get a separate Server thread to communicate
