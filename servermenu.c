@@ -94,6 +94,12 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	
 	return;
 	
+	/*if (strcmp(userRole, "Buyer") == 0) {
+		newCustomer();
+	} else {
+		newSeller();
+	}*/
+	
 	//Likely will put this info into a struct of some sort
 	//This information is then entered into the sellerInformation or customerInformation database depending on the userRole (Buyer or Seller)
 }
@@ -115,8 +121,8 @@ void showSellerMenu(int soc_conn) {
 		strcat(msg, "3. Remove an existing product\n");
 		strcat(msg, "4. Update the quantity of a product\n");
 		strcat(msg, "5. Update the price of a product\n");
-		strcat(msg, "6. View available products\n");
-		strcat(msg, "7. View orders for your products\n");
+		strcat(msg, "6. View my products for sale\n");
+		strcat(msg, "7. View orders for my products\n");
 		strcat(msg, "8. Exit the program\n");
 		
 		write(soc_conn, msg, sizeof(msg));
@@ -134,13 +140,8 @@ void showSellerMenu(int soc_conn) {
 				printf("%s\n", msg);
 				break;
 			case 2:
-				bzero(msg, sizeof(msg));
-				strcat(msg, "Please enter product information:\n");
-				write(soc_conn, msg, sizeof(msg));
-				write(soc_conn, "input", sizeof("input"));
-				bzero(msg, sizeof(msg));
-				read(soc_conn, msg, sizeof(msg));
-				printf("%s\n", msg);
+				addNewProduct(soc_conn);
+				
 				break;
 			case 3:
 				bzero(msg, sizeof(msg));
@@ -185,6 +186,64 @@ void showSellerMenu(int soc_conn) {
 				break;
 		}
 	}
+	return;
+}
+
+void writeNoInput(int soc_conn, char writeThis[1024]) {
+	char msg[1024];
+	bzero(msg, sizeof(msg));
+	strcat(msg, writeThis);
+	write(soc_conn, msg, sizeof(msg));
+	return;
+}
+	
+
+void addNewProduct(int soc_conn) {
+	char msg[1024];
+	int productID;
+	char description[500];
+	int sellerID;
+	int numAvailable;
+	double price;
+	
+	writeNoInput(soc_conn, "Please enter product information:\n");
+	
+	//Get productID
+	writeNoInput(soc_conn, "Product ID:\n");
+	write(soc_conn, "input", sizeof("input"));
+	bzero(msg, sizeof(msg));
+	read(soc_conn, msg, sizeof(msg));
+	productID = atoi(msg);
+	
+	//Get description
+	writeNoInput(soc_conn, "Description:\n");
+	write(soc_conn, "input", sizeof("input"));
+	bzero(msg, sizeof(msg));
+	read(soc_conn, msg, sizeof(msg));
+	strcpy(description, msg);
+	
+	//Get sellerID
+	writeNoInput(soc_conn, "SellerID:\n");
+	write(soc_conn, "input", sizeof("input"));
+	bzero(msg, sizeof(msg));
+	read(soc_conn, msg, sizeof(msg));
+	sellerID = atoi(msg);	//Need to check if this sellerID is a valid foreign key?
+	
+	//Get numAvailable
+	writeNoInput(soc_conn, "Quantity Available:\n");
+	write(soc_conn, "input", sizeof("input"));
+	bzero(msg, sizeof(msg));
+	read(soc_conn, msg, sizeof(msg));
+	numAvailable = atoi(msg);
+	
+	//Get Price
+	writeNoInput(soc_conn, "Price:\n");
+	write(soc_conn, "input", sizeof("input"));
+	bzero(msg, sizeof(msg));
+	read(soc_conn, msg, sizeof(msg));
+	price = atof(msg);
+	
+	//newProduct()
 	return;
 }
 
