@@ -1,7 +1,11 @@
+#ifndef DATAFUNC_H
+#define DATAFUNC_H
+
 #include <stdio.h>
-#include "unistd.h"
+#include <string.h>
+#include <unistd.h>
+
 #include "database.h"
-#include "database.c"
 
 BillingTable * tableOfBillings;
 CustomerTable * tableOfCustomers;
@@ -439,3 +443,5 @@ void viewOrdersForProducts(int productID, int soc_conn)
         }
     }
 }
+
+#endif
