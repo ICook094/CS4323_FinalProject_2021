@@ -53,9 +53,10 @@ int saveSellers(SellerTable table)
 {
     FILE *sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
 
+
     for (int i = 0; i < table.count; i++)
     {
-        if (table.entries[i].sellerID == 0)
+        if (table.entries[i].sellerID < 0)
             break; //there should not be an id with a value of 0 or less
 
         char entry[500] = "";
@@ -122,7 +123,7 @@ int saveCustomers(CustomerTable table)
     
     for(int i = 0; i < table.count; i++)
     {
-        if(table.entries[i].customerID == 0) break; //there should not be an id with a value of 0 or less
+        if(table.entries[i].customerID < 0) break; //there should not be an id with a value of 0 or less
 
         char entry[500] = "";
         sprintf(entry, "%i,%s,%s,%s\n",
@@ -191,7 +192,7 @@ int saveProducts(ProductTable table)
     
     for(int i = 0; i < table.count; i++)
     {
-        if(table.entries[i].productID == 0) break; //there should not be an id with a value of 0 or less
+        if(table.entries[i].productID < 0) break; //there should not be an id with a value of 0 or less
 
         char entry[1000] = "";
         sprintf(entry, "%i,%s,%i,%i,%f\n",

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "databaseFunctions.h"
 //#include "databaseFunctions.h"
 #define MAXLINE 1024
 //Server thread
@@ -6,7 +7,7 @@
 
 void * handler_cli(void * h){
 		//printf("Handling client...\n");
-        struct cli_info * info_c = (struct cli_info *)h;
+        struct cli_info * info_c = (struct cli_info *)h; 
         char msg[1024];
         int soc_conn = info_c->conn_start;
         int m = info_c->m;
@@ -14,6 +15,8 @@ void * handler_cli(void * h){
         int port = info_c->port;
         char * IPaddr = info_c->IPaddr;
 		
+        //Function is in databaseFunction.c
+        startupStructures();
 		//Sends the execution to servermenu.c to navigate through the menus
 		buyerOrSeller(soc_conn);	//This function is in servermenu.c
 		//When the user is done in the menus, the execution will return here
@@ -28,76 +31,6 @@ void * handler_cli(void * h){
         pthread_exit(NULL);
 		printf("done closing everything\n");
 }
-/*
-		//Below is Sagar's server menu execution code. I commented it out and used my code for this in servermenu.c because...
-		//...I thought it would be better to have a separate file for that. -Scott
-		
-        memset(msg, '\0', 1024);
-		sprintf(msg, "\n1. Seller\n2. Buyer\n3. Exit the program\n\nEnter your choice ");
-		send(soc_conn, msg, strlen(msg), 0);
-        memset(msg, '\0', 1024);
-
-
-        sleep(1);
-        while(1){
-
-                write(1, msg, strlen(msg));
-				
-				memset(msg, '\0', 1024);
-		recv_sz = recv(soc_conn, msg, 1024, 0);
-		msg[recv_sz] = '\0';
-		
-//Seller page open
-		if(msg[0] == '1'){
-			//Client NAME
-			memset(msg, '\0', 1024);
-			sprintf(msg, "\n\n\n***SELLER PAGE***\n\nPLEASE ENTER\nFull Name: ");
-			send(soc_conn, msg, strlen(msg), 0);
-			memset(msg, '\0', 1024);
-			recv_sz = recv(soc_conn, msg, 1024, 0);
-			msg[recv_sz] = '\0';
-			char *name_cli = (char *)malloc(75);
-			strcpy(name_cli, msg);
-			memset(msg, '\0', 1024);
-			
-			//Client Seller ID
-			memset(msg, '\0', 1024);
-			sprintf(msg, "\nSeller ID: ");
-			send(soc_conn, msg, strlen(msg), 0);
-			memset(msg, '\0', 1024);
-			recv_sz = recv(soc_conn, msg, 1024, 0);
-			msg[recv_sz] = '\0';
-			char *ID_cli = (char *)malloc(12);
-			strcpy(ID_cli, msg);
-			memset(msg, '\0', 1024);
-
-			//Client Phone number
-			memset(msg, '\0', 1024);
-			sprintf(msg, "\n10-digit Phone Number: ");
-			send(soc_conn, msg, strlen(msg), 0);
-			memset(msg, '\0', 1024);
-			recv_sz = recv(soc_conn, msg, 1024, 0);
-			msg[recv_sz] = '\0';
-			char *phone_cli = (char *)malloc(12);
-			strcpy(phone_cli, msg);
-			memset(msg, '\0', 1024);
-
-			//Client Address
-			memset(msg, '\0', 1024);
-			sprintf(msg, "\nContact address: ");
-			send(soc_conn, msg, strlen(msg), 0);
-			memset(msg, '\0', 1024);
-			recv_sz = recv(soc_conn, msg, 1024, 0);
-			msg[recv_sz] = '\0';
-			char *addr_cli = (char *)malloc(75);
-			strcpy(addr_cli, msg);
-			memset(msg, '\0', 1024);
-		}
-
-				
-
-     }
-*/
 
 void * handler_serv(void * h){
 
@@ -164,7 +97,5 @@ void * handler_serv(void * h){
 				 }
 
                 }
-
-       
 }
 
