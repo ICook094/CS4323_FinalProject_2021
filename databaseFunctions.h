@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "unistd.h"
 
 #include "database.h"
 #include "database.c"
@@ -37,21 +38,28 @@ void saveStructuresToFiles(){
     saveSellers(*tableOfSellers);
 }
 
-//TODO
-//might be done in main function to have access to that new struct without returning it
-void newSeller(){
-    Seller newSeller;
+int checkSellerExists(char name[]){
+    int count = tableOfSellers->count;
 
-    addSellerToTable(newSeller, tableOfSellers);
+    for (int i = 0; i < count; i++){
+        if (tableOfSellers->entries[i].name == name){
+            sellerInfo = tableOfSellers->entries[i];
+            return 1;
+        }
+    }
+    return 0;
 }
 
-//TODO
-//might be done in main function to have access to that new struct without returning it
-void newCustomer(){
-    Customer newCustomer;
+int checkCustomerExists(char name[]){
+    int count = tableOfCustomers->count;
 
-
-    addCustomerToTable(newCustomer, tableOfCustomers);
+    for (int i = 0; i < count; i++){
+        if (tableOfCustomers->entries[i].name == name){
+            customerInfo = tableOfCustomers->entries[i];
+            return 1;
+        }
+    }
+    return 0;
 }
 
 //TODO
@@ -107,9 +115,34 @@ void returnOrder(Order orderToReturn){
 }
 
 //TODO
-void addNewProduct(){
+void addNewProduct(int soc_conn){
     Product newProduct;
 
+    char msg[1024];
+    bzero(msg, sizeof(msg));
+    //ask client for a description of product
+    strcat(msg, "\nEnter a description of the product:\n");
+    write(soc_conn, msg, sizeof(msg));
+    //ask for user input from the client
+    write(soc_conn, "input", sizeof("input"));
+    bzero(msg, sizeof(msg));
+    read(soc_conn, msg, sizeof(msg));
+    strcpy(newProduct.description, msg);
+
+    //ask client for number of product available
+    bzero(msg,sizeof(msg));
+    strcat(msg, "\nEnter the quantity of the product that is available\n");
+    write(soc_conn, msg, sizeof(msg));
+    //ask for user input from the client
+    write(soc_conn, "input", sizeof("input"));
+    bzero(msg, sizeof(msg));
+    read(soc_conn, msg, sizeof(msg));
+    //char to int
+    int numAvailable = atoi(msg);
+    newProduct.numAvailable = numAvailable;
+    
+    //enter price
+    bzero(msg, sizeof(msg));
     addProductToTable(newProduct, tableOfProducts);
 }
 
@@ -194,23 +227,14 @@ void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
             //print out order
             char msg[1024];
             bzero(msg, sizeof(msg));
-            strcat(msg, "\nOrderID: ");
-            strcat(msg, tableOfOrders->entries[i].orderID);
-            strcat(msg, "\nProductID: ");
-            strcat(msg, tableOfOrders->entries[i].productID);
-            strcat(msg, "\nAmount of Product Purchased: ");
-            strcat(msg, tableOfOrders->entries[i].numPurchased);
-            strcat(msg, "\nDelivery Address: ");
-            strcat(msg, tableOfOrders->entries[i].deliveryAddress);
-            strcat(msg, "\nTotal Price: ");
 
-            //change double type to char [] type
-            int sizeOfPrice = sizeof(tableOfOrders->entries[i].totalPrice);
-            char arr[sizeOfPrice];
-            memcpy(arr, &tableOfOrders->entries[i].totalPrice, sizeOfPrice);
-
-            strcat(msg, arr);
-            strcat(msg, "\n\n");
+            sprintf(msg, "\nOrderID: %d \nProductID: %d \nAmount of Product Purchased: %d \nDeliverAddress: %s \nTotal Price %d\n\n",
+                tableOfOrders->entries[i].orderID, 
+                tableOfOrders->entries[i].productID,
+                tableOfOrders->entries[i].numPurchased,
+                tableOfOrders->entries[i].deliveryAddress,
+                tableOfOrders->entries[i].totalPrice
+                );
 
             write(soc_conn, msg, sizeof(msg));
         }
@@ -225,22 +249,13 @@ void viewBillingInfo(int customerID, int soc_conn){
             //print out order
             char msg[1024];
             bzero(msg, sizeof(msg));
-            strcat(msg, "\nOrderID: ");
-            strcat(msg, tableOfBillings->entries[i].orderID);
-            strcat(msg, "\nProductID: ");
-            strcat(msg, tableOfBillings->entries[i].customerID);
-            strcat(msg, "\nBilling Address: ");
-            strcat(msg, tableOfBillings->entries[i].billingAddress);
-            strcat(msg, "\nOrder Price: ");
 
-
-            //change double type to char [] type
-            int sizeOfPrice = sizeof(tableOfBillings->entries[i].orderPrice);
-            char arr[sizeOfPrice];
-            memcpy(arr, &tableOfBillings->entries[i].orderPrice, sizeOfPrice);
-
-            strcat(msg, arr);
-            strcat(msg, "\n\n");
+            sprintf(msg, "\nOrderID: %d \nProductID: %d \nBilling Adress: %s \nOrder Price %d\n\n",
+                tableOfBillings->entries[i].orderID,
+                tableOfBillings->entries[i].customerID,
+                tableOfBillings->entries[i].billingAddress,
+                tableOfBillings->entries[i].orderPrice
+                );
 
             write(soc_conn, msg, sizeof(msg));
         }
