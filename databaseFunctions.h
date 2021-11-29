@@ -112,7 +112,6 @@ void returnOrder(int orderID){
     }
 
     //delete order from orderTable
-    int orderCount = tableOfOrders->count;
     for (int i = 0; i < orderCount; i++){
         if(tableOfOrders->entries[i].orderID == orderToReturn.orderID){
             for (int j = i; j < orderCount; j++){

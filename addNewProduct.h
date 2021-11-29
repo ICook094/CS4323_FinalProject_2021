@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+void writeNoInput(int soc_conn, char writeThis[1024]);
+
 void addNewProduct(int soc_conn) {
 	char msg[1024];
 	int productID;

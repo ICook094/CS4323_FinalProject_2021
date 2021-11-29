@@ -10,6 +10,10 @@
 #include <string.h>
 
 void writeNoInput(int soc_conn, char writeThis[1024]);
+void getUserInfo(char userRole[6], int soc_conn);
+void showSellerMenu(int soc_conn);
+void showBuyerMenu(int soc_conn);
+
 
 void buyerOrSeller(int soc_conn) {
 	
