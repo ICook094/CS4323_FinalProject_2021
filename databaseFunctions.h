@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "unistd.h"
-
 #include "database.h"
 #include "database.c"
 
@@ -64,14 +63,24 @@ int checkCustomerExists(char name[]){
 
 //TODO
 //purchase a product option 2 in showBuyerMenu
-void newOrder(){
+void newOrder(int productID, int quantity){
     Order newOrder;
+    newOrder.productID = productID;
+    newOrder.numPurchased = quantity;
+    strcpy(newOrder.deliveryAddress, customerInfo.address);
 
+    Product * product = &(tableOfProducts->entries[productID]);
+    product->numAvailable -= quantity;
+
+    newOrder.totalPrice = quantity * product->price;
+    
     addOrderToTable(newOrder, tableOfOrders);
-}
-//not mentioned Yet part of newORDER
-void newBilling(){
+
     BillingInfo newBill;
+    newBill.customerID = customerInfo.customerID;
+    strcpy(newBill.billingAddress, customerInfo.address);
+    newBill.orderID = tableOfOrders->count - 1;
+    newBill.orderPrice = newOrder.totalPrice;
 
     addBillingToTable(newBill, tableOfBillings);
 }
@@ -185,26 +194,70 @@ void updateProductPrice(int productID, int newPrice){
 
 //TODO
 //replace case one in showSellerMenu() maybe make global seller struct
-void updateSellerInformation(){
-    printf("What information would you like to update?\n");
-    printf("\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+void updateSellerInformation(int soc_conn){
+    char msg[250];
+    strcpy(msg, "What information would you like to update?\n");
+    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+    write(soc_conn, msg, sizeof(msg));
+    bzero(msg, sizeof(msg));
     
-    char token[15];
-    fgets(token, 15, stdin);
+    write(soc_conn, "input", 5);
+
+    char token[50];
+    bzero(token, sizeof(token));
+    read(soc_conn, token, sizeof(token));
 
     if(token[0] == '1')
     {
-        printf("What would you like to change it to?");
-        bzero(token, 15);
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
         
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(sellerInfo.name, sizeof(sellerInfo.name));
+        strcpy(sellerInfo.name, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
+
     }
     if(token[0] == '2')
     {
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
         
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(sellerInfo.address, sizeof(sellerInfo.address));
+        strcpy(sellerInfo.address, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
     }
     if(token[0] == '3')
     {
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
         
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(sellerInfo.phNumber, sizeof(sellerInfo.phNumber));
+        strcpy(sellerInfo.phNumber, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
     }
     else
     {
@@ -214,8 +267,75 @@ void updateSellerInformation(){
 
 //TODO
 //replace case one in showBuyerMenu() maybe make global buyer struct
-void updateCustomerInformation(){
+void updateCustomerInformation(int soc_conn){
+    char msg[250];
+    strcpy(msg, "What information would you like to update?\n");
+    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+    write(soc_conn, msg, sizeof(msg));
+    bzero(msg, sizeof(msg));
+    
+    write(soc_conn, "input", 5);
 
+    char token[50];
+    bzero(token, sizeof(token));
+    read(soc_conn, token, sizeof(token));
+
+    if(token[0] == '1')
+    {
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
+        
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(customerInfo.name, sizeof(customerInfo.name));
+        strcpy(customerInfo.name, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
+
+    }
+    if(token[0] == '2')
+    {
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
+        
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(customerInfo.address, sizeof(customerInfo.address));
+        strcpy(customerInfo.address, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
+    }
+    if(token[0] == '3')
+    {
+        strcpy(msg, "What would you like to change it to?\n> ");
+        write(soc_conn, msg, sizeof(msg));
+        
+        write(soc_conn, "input", 5);
+
+        bzero(token, sizeof(token));
+        read(soc_conn, token, sizeof(token));
+
+        bzero(customerInfo.phNumber, sizeof(customerInfo.phNumber));
+        strcpy(customerInfo.phNumber, token);
+
+        bzero(msg, sizeof(msg));
+        strcpy(msg, "Information Updated\n");                
+        write(soc_conn, msg, sizeof(msg));
+    }
+    else
+    {
+        printf("Invalid Input. Try Again.\n");
+    }
 }
 
 //create local order for said buyer and pass that into the function.
@@ -276,7 +396,7 @@ void viewProductsAvailable(){
     }
 }
 
-void viewProductsForSeller(int sellerID){
+void viewProductsForSeller(int sellerID, int soc_conn){
 
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
@@ -285,17 +405,20 @@ void viewProductsForSeller(int sellerID){
         {
             Product product = tableOfProducts->entries[i]; // get product information
 
-            printf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+            char msg[500];
+            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
                 product.productID,
                 product.numAvailable,
                 product.price,
                 product.description
                 );
+
+            write(soc_conn, msg, sizeof(msg));
         }
     }
 }
 
-void viewOrdersForProducts(int productID)
+void viewOrdersForProducts(int productID, int soc_conn)
 {
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfOrders->count; i++)
@@ -303,13 +426,16 @@ void viewOrdersForProducts(int productID)
         if(tableOfOrders->entries[i].productID == productID)
         {
             Order order = tableOfOrders->entries[i]; // get product with billing information
-
-            printf("Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\n\nDelivery Address: %s",
+            
+            char msg[500];
+            printf(msg, "Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\n\nDelivery Address: %s",
                 order.orderID,
                 order.numPurchased,
                 order.totalPrice,
                 order.deliveryAddress
                 );
+            
+            write(soc_conn, msg, sizeof(msg));
         }
     }
 }
