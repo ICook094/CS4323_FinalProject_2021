@@ -17,6 +17,11 @@ SellerTable * tableOfSellers;
 Seller sellerInfo;
 Customer customerInfo;
 
+pthread_mutex_t lockBillingTable;
+pthread_mutex_t lockCustomerTable;
+pthread_mutex_t lockOrderTable;
+pthread_mutex_t lockProductTable;
+pthread_mutex_t lockSellerTable;
 
 //Does not need Mutex Locks
 void startupStructures(){

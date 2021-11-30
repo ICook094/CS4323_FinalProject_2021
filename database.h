@@ -12,11 +12,13 @@
 // the maximum entries allowed per table
 #define MAX_ENTRIES 500
 
-pthread_mutex_t lockBillingTable;
-pthread_mutex_t lockCustomerTable;
-pthread_mutex_t lockOrderTable;
-pthread_mutex_t lockProductTable;
-pthread_mutex_t lockSellerTable;
+#include <pthread.h>
+
+extern pthread_mutex_t lockBillingTable;
+extern pthread_mutex_t lockCustomerTable;
+extern pthread_mutex_t lockOrderTable;
+extern pthread_mutex_t lockProductTable;
+extern pthread_mutex_t lockSellerTable;
 
 // database data definitions
 typedef struct sellerInformation 

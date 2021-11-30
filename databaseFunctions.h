@@ -3,13 +3,13 @@
 
 #include "database.h"
 
-BillingTable * tableOfBillings;
-CustomerTable * tableOfCustomers;
-OrderTable * tableOfOrders;
-ProductTable * tableOfProducts;
-SellerTable * tableOfSellers;
-Seller sellerInfo;
-Customer customerInfo;
+extern BillingTable * tableOfBillings;
+extern CustomerTable * tableOfCustomers;
+extern OrderTable * tableOfOrders;
+extern ProductTable * tableOfProducts;
+extern SellerTable * tableOfSellers;
+extern Seller sellerInfo;
+extern Customer customerInfo;
 
 void startupStructures();
 
