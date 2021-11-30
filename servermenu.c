@@ -101,19 +101,18 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	read(soc_conn, msg, sizeof(msg));
 	strcpy(userAddress, msg);
 
-	if(userRole == "Buyer"){
+	if(userRole == "Seller"){
 		printf("save address");
-		strcpy(customerInfo.name, userName);
-		strcpy(customerInfo.phNumber, userPhone);
-		strcpy(customerInfo.address, userAddress);
-
-		addCustomerToTable(customerInfo, tableOfCustomers);
-	} else { //Seller
 		strcpy(sellerInfo.name, userName);
 		strcpy(sellerInfo.phNumber, userPhone);
 		strcpy(sellerInfo.address, userAddress);
-
 		addSellerToTable(sellerInfo, tableOfSellers);
+		
+	} else { //Customer
+		strcpy(customerInfo.name, userName);
+		strcpy(customerInfo.phNumber, userPhone);
+		strcpy(customerInfo.address, userAddress);
+		addCustomerToTable(customerInfo, tableOfCustomers);
 	}
 
 	return;
