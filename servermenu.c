@@ -229,8 +229,6 @@ void showBuyerMenu(int soc_conn) {
 	//This function shows the available options to buyers and then implements the functions for those options
 	//This function is called by buyerOrSeller()
 	
-	//Likely will loop this menu so a user can do multiple actions consecutively
-	
 	int option;
 	char msg[1024];
 	int done = 0;
@@ -252,22 +250,39 @@ void showBuyerMenu(int soc_conn) {
 		read(soc_conn, msg, sizeof(msg));
 		switch(atoi(msg)) {
 			case 1:
+				writeNoInput(soc_conn, "Please Enter Updated User Information:\n");
+				updateCustomerInformation(soc_conn);
 				break;
-				printf("Please Enter Updated User Information:\n");
 			case 2:
+				writeNoInput(soc_conn, "Product ID of product you want to buy:\n");
 				printf("Product ID of product you want to buy:\n");
 				break;
 			case 3:
-				printf("Product ID of product to be returned:\n");
+				writeNoInput(soc_conn, "Please enter the Order ID of the order you want to return:\n");
+				write(soc_conn, "input", sizeof("input"));
+				bzero(msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
+				returnOrder(atoi(msg));
 				break;
 			case 4:
-				printf("These are the available products to buy with their prices:\n");
+				writeNoInput(soc_conn, "These are the available products to buy with their prices:\n");
+				viewProductsAvailable();
 				break;
 			case 5:
+				writeNoInput(soc_conn, "Please enter your address to see orders you have placed:\n");
+				write(soc_conn, "input", sizeof("input"));
+				bzero(msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
 				printf("These are the orders you have placed:\n");
+				viewOrdersAsCustomer(msg, soc_conn);
 				break;
 			case 6:
+				writeNoInput(soc_conn, "Please enter your Buyer ID to see your billing information:\n");
+				write(soc_conn, "input", sizeof("input"));
+				bzero(msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
 				printf("This is your billing information:\n");
+				viewBillingInfo(atoi(msg), soc_conn);
 				break;
 			case 7:
 				saveStructuresToFiles();

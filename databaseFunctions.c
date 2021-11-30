@@ -255,147 +255,122 @@ void updateProductPrice(int productID, int newPrice){
 //TODO
 //replace case one in showSellerMenu() maybe make global seller struct
 void updateSellerInformation(int soc_conn){
-    char msg[250];
+    char msg[1024];
     strcpy(msg, "What information would you like to update?\n");
-    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n");
     write(soc_conn, msg, sizeof(msg));
     bzero(msg, sizeof(msg));
     
     write(soc_conn, "input", 5);
-
-    char token[50];
+    char token[1024];
     bzero(token, sizeof(token));
     read(soc_conn, token, sizeof(token));
 
-    if(token[0] == '1')
+    if(strcmp(token, "1") == 0)
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(sellerInfo.name, sizeof(sellerInfo.name));
         strcpy(sellerInfo.name, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
-
+		writeNoInput(soc_conn, "Information Updated\n");
     }
-    if(token[0] == '2')
+    else if(strcmp(token, "2") == 0)
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(sellerInfo.address, sizeof(sellerInfo.address));
         strcpy(sellerInfo.address, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
+        writeNoInput(soc_conn, "Information Updated\n");
     }
-    if(token[0] == '3')
+    else if(token[0] == '3')
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(sellerInfo.phNumber, sizeof(sellerInfo.phNumber));
         strcpy(sellerInfo.phNumber, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
+        writeNoInput(soc_conn, "Information Updated\n");
     }
     else
     {
         printf("Invalid Input. Try Again.\n");
     }
+	return;
 }
 
 //TODO
 //replace case one in showBuyerMenu() maybe make global buyer struct
 void updateCustomerInformation(int soc_conn){
-    char msg[250];
+	
+	char msg[1024];
     strcpy(msg, "What information would you like to update?\n");
-    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n> ");
+    strcat(msg, "\t1. Name\n\t2. Address\n\t3. Phone Number\n");
     write(soc_conn, msg, sizeof(msg));
     bzero(msg, sizeof(msg));
     
     write(soc_conn, "input", 5);
-
-    char token[50];
+    char token[1024];
     bzero(token, sizeof(token));
     read(soc_conn, token, sizeof(token));
 
-    if(token[0] == '1')
+    if(strcmp(token, "1") == 0)
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(customerInfo.name, sizeof(customerInfo.name));
         strcpy(customerInfo.name, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
-
+		writeNoInput(soc_conn, "Information Updated\n");
     }
-    if(token[0] == '2')
+    else if(strcmp(token, "2") == 0)
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(customerInfo.address, sizeof(customerInfo.address));
         strcpy(customerInfo.address, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
+        writeNoInput(soc_conn, "Information Updated\n");
     }
-    if(token[0] == '3')
+    else if(token[0] == '3')
     {
-        strcpy(msg, "What would you like to change it to?\n> ");
-        write(soc_conn, msg, sizeof(msg));
+		writeNoInput(soc_conn, "What would you like to change it to?\n");
         
-        write(soc_conn, "input", 5);
-
+        write(soc_conn, "input", sizeof("input"));
         bzero(token, sizeof(token));
         read(soc_conn, token, sizeof(token));
 
         bzero(customerInfo.phNumber, sizeof(customerInfo.phNumber));
         strcpy(customerInfo.phNumber, token);
 
-        bzero(msg, sizeof(msg));
-        strcpy(msg, "Information Updated\n");                
-        write(soc_conn, msg, sizeof(msg));
+        writeNoInput(soc_conn, "Information Updated\n");
     }
     else
     {
         printf("Invalid Input. Try Again.\n");
     }
+	return;
 }
 
 //create local order for said buyer and pass that into the function.
