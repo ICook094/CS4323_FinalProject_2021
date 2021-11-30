@@ -13,8 +13,10 @@ SellerTable * initSellers()
 
 void addSellerToTable(Seller toAdd, SellerTable * table)
 {
+    pthread_mutex_lock(&lockSellerTable);
     toAdd.sellerID = table->count++;
     table->entries[table->count - 1] = toAdd;
+    pthread_mutex_unlock(&lockSellerTable);
 }
 
 int loadSellers(SellerTable * table)
@@ -49,11 +51,12 @@ int loadSellers(SellerTable * table)
     return 0;
 }
 
+//MutexLocked
 int saveSellers(SellerTable table)
 {
     FILE *sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
 
-
+    pthread_mutex_lock(&lockSellerTable);
     for (int i = 0; i < table.count; i++)
     {
         if (table.entries[i].sellerID < 0)
@@ -68,6 +71,7 @@ int saveSellers(SellerTable table)
 
         fputs(entry, sellerFile);
     }
+    pthread_mutex_unlock(&lockSellerTable);
 
     fclose(sellerFile);
     return 0;
@@ -82,8 +86,10 @@ CustomerTable * initCustomers()
 
 void addCustomerToTable(Customer toAdd, CustomerTable * table)
 {
+    pthread_mutex_lock(&lockCustomerTable);
     toAdd.customerID = table->count++;
     table->entries[table->count - 1] = toAdd;
+    pthread_mutex_unlock(&lockCustomerTable);
 }
 
 int loadCustomers(CustomerTable * table)
@@ -121,6 +127,7 @@ int saveCustomers(CustomerTable table)
 {
     FILE * customerFile = fopen(CUSTOMERDB, "w"); // open the file in write mode
     
+    pthread_mutex_lock(&lockCustomerTable);
     for(int i = 0; i < table.count; i++)
     {
         if(table.entries[i].customerID < 0) break; //there should not be an id with a value of 0 or less
@@ -135,6 +142,7 @@ int saveCustomers(CustomerTable table)
 
         fputs(entry, customerFile);
     }
+    pthread_mutex_unlock(&lockCustomerTable);
 
     fclose(customerFile);
     return 0;
@@ -149,8 +157,10 @@ ProductTable * initProducts()
 
 void addProductToTable(Product toAdd, ProductTable * table)
 {
+    pthread_mutex_lock(&lockProductTable);
     toAdd.productID = table->count++;
     table->entries[table->count - 1] = toAdd;
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 int loadProducts(ProductTable * table)
@@ -190,6 +200,7 @@ int saveProducts(ProductTable table)
 {
     FILE * productFile = fopen(PRODUCTDB, "w"); // open the file in write mode
     
+    pthread_mutex_lock(&lockProductTable);
     for(int i = 0; i < table.count; i++)
     {
         if(table.entries[i].productID < 0) break; //there should not be an id with a value of 0 or less
@@ -205,6 +216,7 @@ int saveProducts(ProductTable table)
 
         fputs(entry, productFile);
     }
+    pthread_mutex_unlock(&lockProductTable);
 
     fclose(productFile);
     return 0;
@@ -219,7 +231,10 @@ BillingTable * initBillings()
 
 void addBillingToTable(BillingInfo toAdd, BillingTable * table)
 {
+    pthread_mutex_lock(&lockBillingTable);
     table->entries[table->count - 1] = toAdd;
+    table->count++;
+    pthread_mutex_unlock(&lockBillingTable);
 }
 
 int loadBillings(BillingTable * table)
@@ -259,6 +274,7 @@ int saveBillings(BillingTable table)
 {
     FILE * billingFile = fopen(BILLINGDB, "w"); // open the file in write mode
     
+    pthread_mutex_lock(&lockBillingTable);
     for(int i = 0; i < table.count; i++)
     {
         char entry[500] = "";
@@ -271,6 +287,7 @@ int saveBillings(BillingTable table)
 
         fputs(entry, billingFile);
     }
+    pthread_mutex_unlock(&lockBillingTable);
 
     fclose(billingFile);
     return 0;
@@ -285,8 +302,10 @@ OrderTable * initOrders()
 
 void addOrderToTable(Order toAdd, OrderTable * table)
 {
+    pthread_mutex_lock(&lockOrderTable);
     toAdd.orderID = table->count++;
     table->entries[table->count - 1] = toAdd;
+    pthread_mutex_unlock(&lockOrderTable);
 }
 
 int loadOrders(OrderTable * table)
@@ -326,6 +345,7 @@ int saveOrders(OrderTable table)
 {
     FILE * orderFile = fopen(ORDERDB, "w"); // open the file in write mode
     
+    pthread_mutex_lock(&lockOrderTable);
     for(int i = 0; i < table.count; i++)
     {
         char entry[1000] = "";
@@ -339,6 +359,7 @@ int saveOrders(OrderTable table)
 
         fputs(entry, orderFile);
     }
+    pthread_mutex_unlock(&lockOrderTable);
 
     fclose(orderFile);
     return 0;

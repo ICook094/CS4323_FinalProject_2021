@@ -193,7 +193,6 @@ void updateProductQuantity(int productID, int quantity){
     for (int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
             tableOfProducts->entries[i].numAvailable = quantity;
-			printf("updated\n");
             break;
         }
     }
