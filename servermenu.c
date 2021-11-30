@@ -168,7 +168,7 @@ void showSellerMenu(int soc_conn) {
 				writeNoInput(soc_conn, "Updated quantity available:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
-				read(soc_conn, "input", sizeof("input"));
+				read(soc_conn, msg, sizeof(msg));
 				int newQuantity = atoi(msg);
 				printf("%d\n", newQuantity);
 				updateProductQuantity(updateQuantityProductID, newQuantity);

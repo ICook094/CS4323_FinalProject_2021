@@ -470,14 +470,14 @@ void viewProductsForSeller(int sellerID, int soc_conn){
             Product product = tableOfProducts->entries[i]; // get product information
 
             char msg[500];
-            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\nDescription: %s\n",
                 product.productID,
                 product.numAvailable,
                 product.price,
                 product.description
                 );
 
-            write(soc_conn, msg, sizeof(msg));
+            writeNoInput(soc_conn, msg);
         }
     }
     pthread_mutex_unlock(&lockProductTable);
@@ -496,14 +496,14 @@ void viewOrdersForProducts(int productID, int soc_conn)
             Order order = tableOfOrders->entries[i]; // get product with billing information
             
             char msg[500];
-            printf(msg, "Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\n\nDelivery Address: %s",
+            printf(msg, "Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\nDelivery Address: %s\n",
                 order.orderID,
                 order.numPurchased,
                 order.totalPrice,
                 order.deliveryAddress
                 );
             
-            write(soc_conn, msg, sizeof(msg));
+            writeNoInput(soc_conn, msg);
         }
     }
 
