@@ -38,6 +38,7 @@ void startupStructures(){
 
 
 void saveStructuresToFiles(){
+
     saveBillings(*tableOfBillings);
     saveCustomers(*tableOfCustomers);
     saveOrders(*tableOfOrders);
@@ -113,6 +114,8 @@ void newOrder(int productID, int quantity){
 //delete order and billing struct
 //return products to availability
 void returnOrder(int orderID){
+
+    pthread_mutex_lock(&lockOrderTable);
     Order orderToReturn;
     int orderCount = tableOfOrders->count;
     for (int i = 0; i < orderCount; i++){
@@ -121,7 +124,9 @@ void returnOrder(int orderID){
             break;
         }
     }
+    pthread_mutex_unlock(&lockOrderTable);
 
+    pthread_mutex_lock(&lockProductTable);
     //return products purshased to products available
     int productCount = tableOfProducts->count;
     for (int i = 0; i < productCount; i++){
@@ -130,7 +135,9 @@ void returnOrder(int orderID){
             break;
         }
     }
+    pthread_mutex_unlock(&lockProductTable);
 
+    pthread_mutex_lock(&lockOrderTable);
     //delete order from orderTable
     for (int i = 0; i < orderCount; i++){
         if(tableOfOrders->entries[i].orderID == orderToReturn.orderID){
@@ -140,7 +147,9 @@ void returnOrder(int orderID){
             break;
         }
     }
+    pthread_mutex_unlock(&lockOrderTable);
 
+    pthread_mutex_lock(&lockBillingTable);
     //delete bill correspondint to order from billingTable
     int billingCount = tableOfBillings->count;
     for (int i = 0; i < billingCount; i++){
@@ -151,7 +160,7 @@ void returnOrder(int orderID){
             break;
         }
     }
-
+    pthread_mutex_unlock(&lockBillingTable);
 }
 
 void addProduct(int soc_conn){
@@ -193,6 +202,8 @@ void addProduct(int soc_conn){
 
 
 void removeProduct(int productID){
+    pthread_mutex_unlock(&lockProductTable);
+
     int count = tableOfProducts->count;
     for(int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
@@ -205,9 +216,13 @@ void removeProduct(int productID){
 
     }
     tableOfProducts->count--;
+
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 void updateProductQuantity(int productID, int quantity){
+    pthread_mutex_lock(&lockProductTable);
+    
     int count = tableOfProducts->count;
     for (int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
@@ -215,9 +230,12 @@ void updateProductQuantity(int productID, int quantity){
             break;
         }
     }
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 void updateProductPrice(int productID, int newPrice){
+    pthread_mutex_lock(&lockProductTable);
+
     int count = tableOfProducts->count;
     for (int i = 0; i < count; i++){
         if(tableOfProducts->entries[i].productID == productID){
@@ -225,6 +243,8 @@ void updateProductPrice(int productID, int newPrice){
             break;
         }
     }
+
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 //TODO
@@ -376,6 +396,8 @@ void updateCustomerInformation(int soc_conn){
 //create local order for said buyer and pass that into the function.
 //option 5 showBuyerMenu
 void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
+    pthread_mutex_lock(&lockOrderTable);
+
     int count = tableOfOrders->count;
     for (int i; i < count; i++){
         if(tableOfOrders->entries[i].deliveryAddress == CustomerAddress){
@@ -394,10 +416,13 @@ void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
+
+    pthread_mutex_unlock(&lockOrderTable);
 }
 
 //option 6 showBuyerMenu
 void viewBillingInfo(int customerID, int soc_conn){
+    pthread_mutex_lock(&lockBillingTable);
     int count = tableOfBillings->count;
     for (int i; i < count; i++){
         if(tableOfBillings->entries[i].customerID == customerID){
@@ -415,9 +440,11 @@ void viewBillingInfo(int customerID, int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
+    pthread_mutex_unlock(&lockBillingTable);
 }
 
 void viewProductsAvailable(){
+    pthread_mutex_lock(&lockProductTable);
     //print out all available products and their quantity and price
     for(int i = 0; i < tableOfProducts->count; i++)
     {
@@ -429,9 +456,13 @@ void viewProductsAvailable(){
                 product.description
                 );
     }
+
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 void viewProductsForSeller(int sellerID, int soc_conn){
+
+    pthread_mutex_lock(&lockSellerTable);
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
     {
@@ -450,10 +481,13 @@ void viewProductsForSeller(int sellerID, int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
+    pthread_mutex_unlock(&lockSellerTable);
 }
 
 void viewOrdersForProducts(int productID, int soc_conn)
-{
+{   
+    pthread_mutex_lock(&lockOrderTable);
+    
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfOrders->count; i++)
     {
@@ -472,4 +506,6 @@ void viewOrdersForProducts(int productID, int soc_conn)
             write(soc_conn, msg, sizeof(msg));
         }
     }
+
+    pthread_mutex_unlock(&lockOrderTable);
 }
