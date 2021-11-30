@@ -423,21 +423,25 @@ void viewBillingInfo(int customerID, int soc_conn){
     pthread_mutex_unlock(&lockBillingTable);
 }
 
-void viewProductsAvailable(){
+void viewProductsAvailable(int soc_conn){
     pthread_mutex_lock(&lockProductTable);
     //print out all available products and their quantity and price
     for(int i = 0; i < tableOfProducts->count; i++)
     {
         Product product = tableOfProducts->entries[i];
-        printf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+		char msg[1024];
+        sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\nDescription: %s\n",
                 product.productID,
                 product.numAvailable,
                 product.price,
                 product.description
                 );
+			
+			writeNoInput(soc_conn, msg);
     }
 
     pthread_mutex_unlock(&lockProductTable);
+	return;
 }
 
 void viewProductsForSeller(int sellerID, int soc_conn){

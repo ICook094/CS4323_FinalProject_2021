@@ -255,7 +255,14 @@ void showBuyerMenu(int soc_conn) {
 				break;
 			case 2:
 				writeNoInput(soc_conn, "Product ID of product you want to buy:\n");
-				printf("Product ID of product you want to buy:\n");
+				write(soc_conn, "input", sizeof("input"));
+				read(soc_conn, msg, sizeof(msg));
+				int purchaseProductID = atoi(msg);
+				writeNoInput(soc_conn, "Quantity you want to purchase:\n");
+				write(soc_conn, "input", sizeof("input"));
+				read(soc_conn, msg, sizeof(msg));
+				int purchaseQuantity = atoi(msg);
+				newOrder(purchaseProductID, purchaseQuantity);
 				break;
 			case 3:
 				writeNoInput(soc_conn, "Please enter the Order ID of the order you want to return:\n");
@@ -266,7 +273,7 @@ void showBuyerMenu(int soc_conn) {
 				break;
 			case 4:
 				writeNoInput(soc_conn, "These are the available products to buy with their prices:\n");
-				viewProductsAvailable();
+				viewProductsAvailable(soc_conn);
 				break;
 			case 5:
 				writeNoInput(soc_conn, "Please enter your address to see orders you have placed:\n");
