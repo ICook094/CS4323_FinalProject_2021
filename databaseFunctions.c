@@ -6,6 +6,8 @@
 #include "database.h"
 #include "databaseFunctions.h"
 
+void writeNoInput(int soc_conn, char writeThis[1024]);
+
 BillingTable * tableOfBillings;
 CustomerTable * tableOfCustomers;
 OrderTable * tableOfOrders;
@@ -137,10 +139,7 @@ void addProduct(int soc_conn){
     Product newProduct;
 
     char msg[1024];
-    bzero(msg, sizeof(msg));
-    //ask client for a description of product
-    strcat(msg, "\nEnter a description of the product:\n");
-    write(soc_conn, msg, sizeof(msg));
+	writeNoInput(soc_conn, "Enter a description of the product:\n");	//Using writeNoInput here to prevent buffer issue
     //ask for user input from the client
     write(soc_conn, "input", sizeof("input"));
     bzero(msg, sizeof(msg));
@@ -148,9 +147,7 @@ void addProduct(int soc_conn){
     strcpy(newProduct.description, msg);
 
     //ask client for number of product available
-    bzero(msg,sizeof(msg));
-    strcat(msg, "\nEnter the quantity of the product that is available:\n");
-    write(soc_conn, msg, sizeof(msg));
+	writeNoInput(soc_conn, "Enter the quantity of the product that is available:\n");	//Using writeNoInput here to prevent buffer issue
     //ask for user input from the client
     write(soc_conn, "input", sizeof("input"));
     bzero(msg, sizeof(msg));
@@ -160,9 +157,7 @@ void addProduct(int soc_conn){
     newProduct.numAvailable = numAvailable;
     
     //enter price
-    bzero(msg, sizeof(msg));
-    strcat(msg, "\nEnter the price of the product:\n");
-    write(soc_conn, msg, sizeof(msg));
+	writeNoInput(soc_conn, "Enter the price of the product:\n");	//Using writeNoInput here to prevent buffer issue
     //ask user for input from the client
     write(soc_conn, "input", sizeof("input"));
     bzero(msg, sizeof(msg));
