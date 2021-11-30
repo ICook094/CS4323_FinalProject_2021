@@ -74,7 +74,7 @@ int checkCustomerExists(char name[]){
 
     int count = tableOfCustomers->count;
     for (int i = 0; i < count; i++){
-        if (tableOfCustomers->entries[i].name == name){
+        if (strcmp(tableOfCustomers->entries[i].name, name) == 0){
             customerInfo = tableOfCustomers->entries[i];
             return 1;
         }
