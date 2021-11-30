@@ -159,7 +159,7 @@ void showSellerMenu(int soc_conn) {
 				removeProduct(atoi(msg));
 				break;
 			case 4:
-				writeNoInput(soc_conn, "Product ID of product to be updated quantity:\n");
+				writeNoInput(soc_conn, "Product ID of product to update quantity:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
 				read(soc_conn, msg, sizeof(msg));
@@ -173,7 +173,7 @@ void showSellerMenu(int soc_conn) {
 				updateProductQuantity(updateQuantityProductID, newQuantity);
 				break;
 			case 5:
-				writeNoInput(soc_conn, "Product ID of product to be updated price:\n");
+				writeNoInput(soc_conn, "Product ID of product to update price:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
 				read(soc_conn, msg, sizeof(msg));
