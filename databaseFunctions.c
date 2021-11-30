@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 #include "unistd.h"
 
 #include "database.h"
@@ -15,6 +16,14 @@ ProductTable * tableOfProducts;
 SellerTable * tableOfSellers;
 Seller sellerInfo;
 Customer customerInfo;
+
+pthread_mutex_t lockBillingTable;
+pthread_mutex_t lockCustomerTable;
+pthread_mutex_t lockOrderTable;
+pthread_mutex_t lockProductTable;
+pthread_mutex_t lockSellerTable;
+
+
 
 void startupStructures(){
     //initialize structures that hold all the information
