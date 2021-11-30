@@ -153,41 +153,55 @@ void showSellerMenu(int soc_conn) {
 				addProduct(soc_conn);
 				break;
 			case 3:
-				bzero(msg, sizeof(msg));
-				strcat(msg, "Product ID of product to be removed:\n");
-				write(soc_conn, msg, sizeof(msg));
+				writeNoInput(soc_conn, "Product ID of product to be removed:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
 				read(soc_conn, msg, sizeof(msg));
-				printf("%s\n", msg);
+				removeProduct(atoi(msg));
 				break;
 			case 4:
-				bzero(msg, sizeof(msg));
-				strcat(msg, "Product ID of product to be updated quantity:\n");
-				write(soc_conn, msg, sizeof(msg));
+				writeNoInput(soc_conn, "Product ID of product to be updated quantity:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
 				read(soc_conn, msg, sizeof(msg));
-				printf("%s\n", msg);
+				int updateQuantityProductID = atoi(msg);
+				writeNoInput(soc_conn, "Updated quantity available:\n");
+				write(soc_conn, "input", sizeof("input"));
+				bzero(msg, sizeof(msg));
+				read(soc_conn, "input", sizeof("input"));
+				int newQuantity = atoi(msg);
+				printf("%d\n", newQuantity);
+				updateProductQuantity(updateQuantityProductID, newQuantity);
 				break;
 			case 5:
-				bzero(msg, sizeof(msg));
-				strcat(msg, "Product ID of product to be updated price:\n");
-				write(soc_conn, msg, sizeof(msg));
+				writeNoInput(soc_conn, "Product ID of product to be updated price:\n");
 				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
 				read(soc_conn, msg, sizeof(msg));
-				printf("%s\n", msg);
+				int updatePriceProductID = atoi(msg);
+				writeNoInput(soc_conn, "Updated price:\n");
+				write(soc_conn, "input", sizeof("input"));
+				bzero(msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
+				int newPrice = atoi(msg);
+				printf("%d\n", newPrice);
+				updateProductPrice(updatePriceProductID, newPrice);
 				break;
 			case 6:
+				writeNoInput(soc_conn, "Please enter your Seller ID to view the products you offer:\n");
+				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
-				strcat(msg, "These are the products that you offer:\n");
-				write(soc_conn, msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
+				writeNoInput(soc_conn, "These are the products that you offer:\n");
+				viewProductsForSeller(atoi(msg), soc_conn);
 				break;
 			case 7:
+				writeNoInput(soc_conn, "Please enter the Product ID to view that product's orders:\n");
+				write(soc_conn, "input", sizeof("input"));
 				bzero(msg, sizeof(msg));
-				strcat(msg, "These are the orders for your products:\n");
-				write(soc_conn, msg, sizeof(msg));
+				read(soc_conn, msg, sizeof(msg));
+				writeNoInput(soc_conn, "These are the orders for your products:\n");
+				viewOrdersForProducts(atoi(msg), soc_conn);
 				break;
 			case 8:
 				saveStructuresToFiles();

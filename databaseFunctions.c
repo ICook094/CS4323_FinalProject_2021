@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include "unistd.h"
 
 #include "database.h"
@@ -17,8 +16,6 @@ SellerTable * tableOfSellers;
 Seller sellerInfo;
 Customer customerInfo;
 
-
-//Does not need Mutex Locks
 void startupStructures(){
     //initialize structures that hold all the information
     tableOfBillings = initBillings();
@@ -36,9 +33,8 @@ void startupStructures(){
 
 }
 
-
+//i think that is how pointers work
 void saveStructuresToFiles(){
-
     saveBillings(*tableOfBillings);
     saveCustomers(*tableOfCustomers);
     saveOrders(*tableOfOrders);
@@ -46,36 +42,27 @@ void saveStructuresToFiles(){
     saveSellers(*tableOfSellers);
 }
 
-//Mutex Locked
 int checkSellerExists(char name[]){
-
-    pthread_mutex_lock(&lockSellerTable);
-
     int count = tableOfSellers->count;
+
     for (int i = 0; i < count; i++){
         if (strcmp(tableOfSellers->entries[i].name, name) == 0){
             sellerInfo = tableOfSellers->entries[i];
             return 1;
         }
     }
-    
-    pthread_mutex_unlock(&lockSellerTable);
     return 0;
 }
 
 int checkCustomerExists(char name[]){
-
-    pthread_mutex_lock(&lockCustomerTable);
-
     int count = tableOfCustomers->count;
+
     for (int i = 0; i < count; i++){
         if (tableOfCustomers->entries[i].name == name){
             customerInfo = tableOfCustomers->entries[i];
             return 1;
         }
     }
-    
-    pthread_mutex_unlock(&lockCustomerTable);
     return 0;
 }
 
@@ -86,10 +73,7 @@ void newOrder(int productID, int quantity){
     newOrder.numPurchased = quantity;
     strcpy(newOrder.deliveryAddress, customerInfo.address);
 
-    pthread_mutex_lock(&lockProductTable);
     Product * product = &(tableOfProducts->entries[productID]);
-    pthread_mutex_unlock(&lockProductTable);
-
     product->numAvailable -= quantity;
 
     newOrder.totalPrice = quantity * product->price;
@@ -99,11 +83,7 @@ void newOrder(int productID, int quantity){
     BillingInfo newBill;
     newBill.customerID = customerInfo.customerID;
     strcpy(newBill.billingAddress, customerInfo.address);
-    
-    pthread_mutex_lock(&lockOrderTable);
     newBill.orderID = tableOfOrders->count - 1;
-    pthread_mutex_unlock(&lockOrderTable);
-    
     newBill.orderPrice = newOrder.totalPrice;
 
     addBillingToTable(newBill, tableOfBillings);
@@ -114,8 +94,6 @@ void newOrder(int productID, int quantity){
 //delete order and billing struct
 //return products to availability
 void returnOrder(int orderID){
-
-    pthread_mutex_lock(&lockOrderTable);
     Order orderToReturn;
     int orderCount = tableOfOrders->count;
     for (int i = 0; i < orderCount; i++){
@@ -124,9 +102,7 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockOrderTable);
 
-    pthread_mutex_lock(&lockProductTable);
     //return products purshased to products available
     int productCount = tableOfProducts->count;
     for (int i = 0; i < productCount; i++){
@@ -135,9 +111,7 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockProductTable);
 
-    pthread_mutex_lock(&lockOrderTable);
     //delete order from orderTable
     for (int i = 0; i < orderCount; i++){
         if(tableOfOrders->entries[i].orderID == orderToReturn.orderID){
@@ -147,9 +121,7 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockOrderTable);
 
-    pthread_mutex_lock(&lockBillingTable);
     //delete bill correspondint to order from billingTable
     int billingCount = tableOfBillings->count;
     for (int i = 0; i < billingCount; i++){
@@ -160,7 +132,7 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockBillingTable);
+
 }
 
 void addProduct(int soc_conn){
@@ -202,8 +174,6 @@ void addProduct(int soc_conn){
 
 
 void removeProduct(int productID){
-    pthread_mutex_unlock(&lockProductTable);
-
     int count = tableOfProducts->count;
     for(int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
@@ -216,13 +186,9 @@ void removeProduct(int productID){
 
     }
     tableOfProducts->count--;
-
-    pthread_mutex_unlock(&lockProductTable);
 }
 
 void updateProductQuantity(int productID, int quantity){
-    pthread_mutex_lock(&lockProductTable);
-    
     int count = tableOfProducts->count;
     for (int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
@@ -230,12 +196,9 @@ void updateProductQuantity(int productID, int quantity){
             break;
         }
     }
-    pthread_mutex_unlock(&lockProductTable);
 }
 
 void updateProductPrice(int productID, int newPrice){
-    pthread_mutex_lock(&lockProductTable);
-
     int count = tableOfProducts->count;
     for (int i = 0; i < count; i++){
         if(tableOfProducts->entries[i].productID == productID){
@@ -243,8 +206,6 @@ void updateProductPrice(int productID, int newPrice){
             break;
         }
     }
-
-    pthread_mutex_unlock(&lockProductTable);
 }
 
 //TODO
@@ -396,8 +357,6 @@ void updateCustomerInformation(int soc_conn){
 //create local order for said buyer and pass that into the function.
 //option 5 showBuyerMenu
 void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
-    pthread_mutex_lock(&lockOrderTable);
-
     int count = tableOfOrders->count;
     for (int i; i < count; i++){
         if(tableOfOrders->entries[i].deliveryAddress == CustomerAddress){
@@ -416,13 +375,10 @@ void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
-
-    pthread_mutex_unlock(&lockOrderTable);
 }
 
 //option 6 showBuyerMenu
 void viewBillingInfo(int customerID, int soc_conn){
-    pthread_mutex_lock(&lockBillingTable);
     int count = tableOfBillings->count;
     for (int i; i < count; i++){
         if(tableOfBillings->entries[i].customerID == customerID){
@@ -440,11 +396,9 @@ void viewBillingInfo(int customerID, int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
-    pthread_mutex_unlock(&lockBillingTable);
 }
 
 void viewProductsAvailable(){
-    pthread_mutex_lock(&lockProductTable);
     //print out all available products and their quantity and price
     for(int i = 0; i < tableOfProducts->count; i++)
     {
@@ -456,12 +410,9 @@ void viewProductsAvailable(){
                 product.description
                 );
     }
-
-    pthread_mutex_unlock(&lockProductTable);
 }
 
 void viewProductsForSeller(int sellerID, int soc_conn){
-
     pthread_mutex_lock(&lockProductTable);
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
@@ -471,23 +422,22 @@ void viewProductsForSeller(int sellerID, int soc_conn){
             Product product = tableOfProducts->entries[i]; // get product information
 
             char msg[500];
-            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\nDescription: %s\n\n",
                 product.productID,
                 product.numAvailable,
                 product.price,
                 product.description
                 );
 
-            write(soc_conn, msg, sizeof(msg));
+            writeNoInput(soc_conn, msg);
         }
     }
     pthread_mutex_unlock(&lockProductTable);
+	return;
 }
 
 void viewOrdersForProducts(int productID, int soc_conn)
-{   
-    pthread_mutex_lock(&lockOrderTable);
-    
+{
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfOrders->count; i++)
     {
@@ -506,6 +456,4 @@ void viewOrdersForProducts(int productID, int soc_conn)
             write(soc_conn, msg, sizeof(msg));
         }
     }
-
-    pthread_mutex_unlock(&lockOrderTable);
 }

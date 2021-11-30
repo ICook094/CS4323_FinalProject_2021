@@ -15,12 +15,9 @@ void * handler_cli(void * h){
         int port = info_c->port;
         char * IPaddr = info_c->IPaddr;
 		
-        //Function is in databaseFunction.c
-        startupStructures();
-		//Sends the execution to servermenu.c to navigate through the menus
-		buyerOrSeller(soc_conn);	//This function is in servermenu.c
-		//When the user is done in the menus, the execution will return here
-		//We need the execution to return here so the code below can close the connection and free up memory
+        
+        startupStructures();	//Function is in databaseFunction.c
+		buyerOrSeller(soc_conn);	//Sends the execution to servermenu.c to navigate through the menus
 		
 		
 		printf("started closing things\n");
