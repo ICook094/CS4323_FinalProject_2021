@@ -9,6 +9,7 @@
 #define BILLINGDB   "billingInformation" FILE_TYPE
 #define ORDERDB     "customerOrder" FILE_TYPE
 
+// the maximum entries allowed per table
 #define MAX_ENTRIES 500
 
 pthread_mutex_t lockBillingTable;
@@ -61,6 +62,7 @@ typedef struct customerOrder
 
 } Order;
 
+//table structs
 typedef struct sellerTable 
 {
     Seller * entries;
@@ -91,6 +93,7 @@ typedef struct orderTable
     int count;
 } OrderTable;
 
+//functions stubs for use elsewhere
 SellerTable * initSellers();
 void addSellerToTable(Seller, SellerTable*);
 int loadSellers(SellerTable*);

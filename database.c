@@ -4,6 +4,7 @@
 
 #include "database.h"
 
+// initializes sellertable dynamically and returns a pointer to the table
 SellerTable * initSellers()
 {
     SellerTable * table = malloc(sizeof(SellerTable));
@@ -11,6 +12,7 @@ SellerTable * initSellers()
     table->entries = malloc(sizeof(Seller) * MAX_ENTRIES);
 }
 
+// adds a new seller (toAdd) to the table and increases the tables count
 void addSellerToTable(Seller toAdd, SellerTable * table)
 {
     pthread_mutex_lock(&lockSellerTable);
@@ -19,6 +21,7 @@ void addSellerToTable(Seller toAdd, SellerTable * table)
     pthread_mutex_unlock(&lockSellerTable);
 }
 
+//loads all sellers as text from file sellerinforamtion.txt and adds them to the table as a structure
 int loadSellers(SellerTable * table)
 {
     FILE * sellerFile = fopen(SELLERDB, "r"); // open the file in read mode
@@ -48,10 +51,11 @@ int loadSellers(SellerTable * table)
         return -1;
     }
 
+    fclose(sellerFile);
     return 0;
 }
 
-//MutexLocked
+//saves all sellers from the table to the file sellerinformation.txt
 int saveSellers(SellerTable table)
 {
     FILE *sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
@@ -77,6 +81,7 @@ int saveSellers(SellerTable table)
     return 0;
 }
 
+// initializes customertable dynamically and returns a pointer to the table
 CustomerTable * initCustomers()
 {
     CustomerTable * table = malloc(sizeof(table));
@@ -84,6 +89,7 @@ CustomerTable * initCustomers()
     table->entries = malloc(sizeof(Customer) * MAX_ENTRIES);
 }
 
+// adds a new customer (toAdd) to the table and increases the tables count
 void addCustomerToTable(Customer toAdd, CustomerTable * table)
 {
     pthread_mutex_lock(&lockCustomerTable);
@@ -92,6 +98,7 @@ void addCustomerToTable(Customer toAdd, CustomerTable * table)
     pthread_mutex_unlock(&lockCustomerTable);
 }
 
+//loads all customers as text from file customerinformation.txt and adds them to the table as a structure
 int loadCustomers(CustomerTable * table)
 {
     FILE * customerFile = fopen(CUSTOMERDB, "r"); // open the file in read mode
@@ -119,7 +126,7 @@ int loadCustomers(CustomerTable * table)
     {
         return -1;
     }
-
+    fclose(customerFile);
     return 0;
 }
 
@@ -192,7 +199,7 @@ int loadProducts(ProductTable * table)
     {
         return -1;
     }
-
+    fclose(productFile);
     return 0;
 }
 
@@ -266,7 +273,7 @@ int loadBillings(BillingTable * table)
     {
         return -1;
     }
-
+    fclose(billingFile);
     return 0;
 }
 
@@ -337,7 +344,7 @@ int loadOrders(OrderTable * table)
     {
         return -1;
     }
-
+    fclose(orderFile);
     return 0;
 }
 
