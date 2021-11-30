@@ -11,6 +11,12 @@
 
 #define MAX_ENTRIES 500
 
+pthread_mutex_t lockBillingTable;
+pthread_mutex_t lockCustomerTable;
+pthread_mutex_t lockOrderTable;
+pthread_mutex_t lockProductTable;
+pthread_mutex_t lockSellerTable;
+
 // database data definitions
 typedef struct sellerInformation 
 {

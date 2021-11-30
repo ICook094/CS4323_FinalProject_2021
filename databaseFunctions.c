@@ -17,14 +17,8 @@ SellerTable * tableOfSellers;
 Seller sellerInfo;
 Customer customerInfo;
 
-pthread_mutex_t lockBillingTable;
-pthread_mutex_t lockCustomerTable;
-pthread_mutex_t lockOrderTable;
-pthread_mutex_t lockProductTable;
-pthread_mutex_t lockSellerTable;
 
-
-
+//Does not need Mutex Locks
 void startupStructures(){
     //initialize structures that hold all the information
     tableOfBillings = initBillings();
@@ -42,7 +36,7 @@ void startupStructures(){
 
 }
 
-//i think that is how pointers work
+
 void saveStructuresToFiles(){
     saveBillings(*tableOfBillings);
     saveCustomers(*tableOfCustomers);
@@ -51,27 +45,36 @@ void saveStructuresToFiles(){
     saveSellers(*tableOfSellers);
 }
 
+//Mutex Locked
 int checkSellerExists(char name[]){
-    int count = tableOfSellers->count;
 
+    pthread_mutex_lock(&lockSellerTable);
+
+    int count = tableOfSellers->count;
     for (int i = 0; i < count; i++){
         if (strcmp(tableOfSellers->entries[i].name, name) == 0){
             sellerInfo = tableOfSellers->entries[i];
             return 1;
         }
     }
+    
+    pthread_mutex_unlock(&lockSellerTable);
     return 0;
 }
 
 int checkCustomerExists(char name[]){
-    int count = tableOfCustomers->count;
 
+    pthread_mutex_lock(&lockCustomerTable);
+
+    int count = tableOfCustomers->count;
     for (int i = 0; i < count; i++){
         if (tableOfCustomers->entries[i].name == name){
             customerInfo = tableOfCustomers->entries[i];
             return 1;
         }
     }
+    
+    pthread_mutex_unlock(&lockCustomerTable);
     return 0;
 }
 
@@ -82,7 +85,10 @@ void newOrder(int productID, int quantity){
     newOrder.numPurchased = quantity;
     strcpy(newOrder.deliveryAddress, customerInfo.address);
 
+    pthread_mutex_lock(&lockProductTable);
     Product * product = &(tableOfProducts->entries[productID]);
+    pthread_mutex_unlock(&lockProductTable);
+
     product->numAvailable -= quantity;
 
     newOrder.totalPrice = quantity * product->price;
@@ -92,7 +98,11 @@ void newOrder(int productID, int quantity){
     BillingInfo newBill;
     newBill.customerID = customerInfo.customerID;
     strcpy(newBill.billingAddress, customerInfo.address);
+    
+    pthread_mutex_lock(&lockOrderTable);
     newBill.orderID = tableOfOrders->count - 1;
+    pthread_mutex_unlock(&lockOrderTable);
+    
     newBill.orderPrice = newOrder.totalPrice;
 
     addBillingToTable(newBill, tableOfBillings);
