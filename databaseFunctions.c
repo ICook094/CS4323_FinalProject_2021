@@ -193,6 +193,7 @@ void updateProductQuantity(int productID, int quantity){
     for (int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
             tableOfProducts->entries[i].numAvailable = quantity;
+			printf("updated\n");
             break;
         }
     }
@@ -421,16 +422,17 @@ void viewProductsForSeller(int sellerID, int soc_conn){
             Product product = tableOfProducts->entries[i]; // get product information
 
             char msg[500];
-            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+            sprintf(msg, "Product ID: %d\nQuantity Available: %d\nPrice: %f\nDescription: %s\n\n",
                 product.productID,
                 product.numAvailable,
                 product.price,
                 product.description
                 );
 
-            write(soc_conn, msg, sizeof(msg));
+            writeNoInput(soc_conn, msg);
         }
     }
+	return;
 }
 
 void viewOrdersForProducts(int productID, int soc_conn)
