@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
         pthread_t * t = (pthread_t *)malloc(sizeof(pthread_t) * serv_count);
  
- for(int i = 0; i < serv_count; i++){
+        for(int i = 0; i < serv_count; i++){
 
                 info_s[i].port = port_1++;
 

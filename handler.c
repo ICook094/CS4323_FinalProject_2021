@@ -6,6 +6,7 @@
 //Each client will get a separate Server thread to communicate
 
 void * handler_cli(void * h){
+        printf("Handler\n");
 		//printf("Handling client...\n");
         struct cli_info * info_c = (struct cli_info *)h; 
         char msg[1024];
@@ -15,10 +16,14 @@ void * handler_cli(void * h){
         int port = info_c->port;
         char * IPaddr = info_c->IPaddr;
 		
+        printf("End Handler\n");
         
         startupStructures();	//Function is in databaseFunction.c
+        printf("Structures Defined\n");
+
 		buyerOrSeller(soc_conn);	//Sends the execution to servermenu.c to navigate through the menus
 		
+        printf("You got here too.");
 		
 		printf("started closing things\n");
 		close(soc_conn);
@@ -78,9 +83,12 @@ void * handler_serv(void * h){
 
                         int len = sizeof(addr_c);
                         int fd_1 = accept(fd_socket, (struct sockaddr *)&addr_c, &len);
-
+                        
+                        
                         struct cli_info * info_c = (struct cli_info *)malloc(sizeof(struct cli_info));
+
 						m = chk_space(verify, num_th);
+                        printf("%i: After 2.\n", port);
 
                         verify[m] = 1;
 
@@ -89,8 +97,10 @@ void * handler_serv(void * h){
 						info_c->m = m;
 						info_c->conn_start = fd_1;
                         info_c->verify = verify;
-						
+
+                        printf("Before Thread Creation\n");
                         pthread_create(&serv_th[m], NULL, handler_cli, (void *)info_c);
+                        printf("After Thread Creation\n");
 				 }
 
                 }

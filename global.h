@@ -43,11 +43,9 @@ void renew(int * verify, int length){
 int chk_space(int * verify, int length){
 
         for(int i = 0; i < length; i++){
-
                 if(verify[i] == -1)
                         return i;
         }
-
         return -1;
 }
 

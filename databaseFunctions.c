@@ -25,8 +25,10 @@ pthread_mutex_t lockSellerTable;
 
 //Does not need Mutex Locks
 void startupStructures(){
+    printf("Begin Structure Definition");
     //initialize structures that hold all the information
     tableOfBillings = initBillings();
+    printf("Billings Defined");
     tableOfCustomers = initCustomers();
     tableOfOrders = initOrders();
     tableOfProducts = initProducts();
@@ -49,6 +51,21 @@ void saveStructuresToFiles(){
     saveOrders(*tableOfOrders);
     saveProducts(*tableOfProducts);
     saveSellers(*tableOfSellers);
+
+    free(tableOfBillings->entries);
+    free(tableOfBillings);
+
+    free(tableOfSellers->entries);
+    free(tableOfSellers);
+
+    free(tableOfCustomers->entries);
+    free(tableOfCustomers);
+
+    free(tableOfProducts->entries);
+    free(tableOfProducts);
+
+    free(tableOfOrders->entries);
+    free(tableOfOrders);    
 }
 
 //Mutex Locked
