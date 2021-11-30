@@ -462,7 +462,7 @@ void viewProductsAvailable(){
 
 void viewProductsForSeller(int sellerID, int soc_conn){
 
-    pthread_mutex_lock(&lockSellerTable);
+    pthread_mutex_lock(&lockProductTable);
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
     {
@@ -481,7 +481,7 @@ void viewProductsForSeller(int sellerID, int soc_conn){
             write(soc_conn, msg, sizeof(msg));
         }
     }
-    pthread_mutex_unlock(&lockSellerTable);
+    pthread_mutex_unlock(&lockProductTable);
 }
 
 void viewOrdersForProducts(int productID, int soc_conn)
