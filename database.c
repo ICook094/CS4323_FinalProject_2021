@@ -130,6 +130,7 @@ int loadCustomers(CustomerTable * table)
     return 0;
 }
 
+//saves all customers from the table to the file customerinformation.txt
 int saveCustomers(CustomerTable table)
 {
     FILE * customerFile = fopen(CUSTOMERDB, "w"); // open the file in write mode
@@ -155,6 +156,7 @@ int saveCustomers(CustomerTable table)
     return 0;
 }
 
+//initializes producttable dynamically and returns a pointer to the table
 ProductTable * initProducts()
 {
     ProductTable * table = malloc(sizeof(Product));
@@ -162,6 +164,7 @@ ProductTable * initProducts()
     table->entries = malloc(sizeof(Product) * MAX_ENTRIES);
 }
 
+// adds a new product (toAdd) to the table and increases the tables count
 void addProductToTable(Product toAdd, ProductTable * table)
 {
     pthread_mutex_lock(&lockProductTable);
@@ -170,6 +173,7 @@ void addProductToTable(Product toAdd, ProductTable * table)
     pthread_mutex_unlock(&lockProductTable);
 }
 
+//loads all products as text from file productinformation.txt and adds them to the table as a structure
 int loadProducts(ProductTable * table)
 {
     FILE * productFile = fopen(PRODUCTDB, "r"); // open the file in read mode
@@ -203,6 +207,7 @@ int loadProducts(ProductTable * table)
     return 0;
 }
 
+//saves all products from the table to the file productinformation.txt
 int saveProducts(ProductTable table)
 {
     FILE * productFile = fopen(PRODUCTDB, "w"); // open the file in write mode
@@ -229,6 +234,7 @@ int saveProducts(ProductTable table)
     return 0;
 }
 
+//initializes billingtable dynamically and returns a pointer to the table
 BillingTable * initBillings()
 {
     BillingTable * table = malloc(sizeof(BillingTable));
@@ -236,6 +242,7 @@ BillingTable * initBillings()
     table->entries = malloc(sizeof(BillingInfo) * MAX_ENTRIES);
 }
 
+// adds a new Billing (toAdd) to the table and increases the tables count
 void addBillingToTable(BillingInfo toAdd, BillingTable * table)
 {
     pthread_mutex_lock(&lockBillingTable);
@@ -244,6 +251,7 @@ void addBillingToTable(BillingInfo toAdd, BillingTable * table)
     pthread_mutex_unlock(&lockBillingTable);
 }
 
+//loads all billings as text from file billingsinformation.txt and adds them to the table as a structure
 int loadBillings(BillingTable * table)
 {
     FILE * billingFile = fopen(BILLINGDB, "r"); // open the file in read mode
@@ -277,6 +285,7 @@ int loadBillings(BillingTable * table)
     return 0;
 }
 
+//saves all billings from the table to the file billinginformation.txt
 int saveBillings(BillingTable table)
 {
     FILE * billingFile = fopen(BILLINGDB, "w"); // open the file in write mode
@@ -300,6 +309,7 @@ int saveBillings(BillingTable table)
     return 0;
 }
 
+//initializes ordertable dynamically and returns a pointer to the table
 OrderTable * initOrders()
 {
     OrderTable * table = malloc(sizeof(OrderTable));
@@ -307,6 +317,7 @@ OrderTable * initOrders()
     table->entries = malloc(sizeof(Order) * MAX_ENTRIES);
 }
 
+// adds a new order (toAdd) to the table and increases the tables count
 void addOrderToTable(Order toAdd, OrderTable * table)
 {
     pthread_mutex_lock(&lockOrderTable);
@@ -315,6 +326,8 @@ void addOrderToTable(Order toAdd, OrderTable * table)
     pthread_mutex_unlock(&lockOrderTable);
 }
 
+
+//loads all orders as text from file orderinformation.txt and adds them to the table as a structure
 int loadOrders(OrderTable * table)
 {
     FILE * orderFile = fopen(ORDERDB, "r"); // open the file in read mode
@@ -348,6 +361,7 @@ int loadOrders(OrderTable * table)
     return 0;
 }
 
+//saves all orders from the table to the file orderinformation.txt
 int saveOrders(OrderTable table)
 {
     FILE * orderFile = fopen(ORDERDB, "w"); // open the file in write mode
