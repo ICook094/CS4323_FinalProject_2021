@@ -4,10 +4,11 @@
 //Group G
 
 //#include "global.h"
-#include "addNewProduct.h"
 #include "databaseFunctions.h"
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 void writeNoInput(int soc_conn, char writeThis[1024]);
 void getUserInfo(char userRole[6], int soc_conn);
@@ -19,13 +20,8 @@ void buyerOrSeller(int soc_conn) {
 	
 	//This function determines the role of each user
 	//Then it calls getUserInfo() with the role as an argument
-	//Then it calls the function to show the menu for the user (currently only showSellerMenu(), will add showBuyerMenu() later)
+	//Then it calls the function to show the proper menu (buyer menu or seller menu) for the user 
 	//This function will be called from the server after a client is accepted
-	
-	//will need to change printf to write or send
-	//will need to change scanf to read or recv
-	//signal to client that server expects input or assume that client will provide write after every time it reads?
-	//separate funtion to updateUserInfo or reuse getUserInfo?
 	
 	char msg[1024];
 	int option;
@@ -121,20 +117,11 @@ void getUserInfo(char userRole[6], int soc_conn) {
 	}
 
 	return;
-	
-	/*if (strcmp(userRole, "Buyer") == 0) {
-		newCustomer();
-	} else {
-		newSeller();
-	}*/
-	
-	//Likely will put this info into a struct of some sort
-	//This information is then entered into the sellerInformation or customerInformation database depending on the userRole (Buyer or Seller)
 }
 
 void showSellerMenu(int soc_conn) {
 	
-	//This function shows the available options to sellers and then calls the functions for those options
+	//This function shows the available options to sellers and then implements the functions for those options
 	//This function is called by buyerOrSeller()
 	
 	int option;
@@ -160,17 +147,10 @@ void showSellerMenu(int soc_conn) {
 		printf("%s", msg);
 		switch(atoi(msg)) {
 			case 1:
-				bzero(msg, sizeof(msg));
-				strcat(msg, "Please Enter Updated User Information:\n");
-				write(soc_conn, msg, sizeof(msg));
-				write(soc_conn, "input", sizeof("input"));
-				bzero(msg, sizeof(msg));
-				read(soc_conn, msg, sizeof(msg));
-				printf("%s\n", msg);
+				updateSellerInformation(soc_conn);
 				break;
 			case 2:
-				addNewProduct(soc_conn);
-				
+				addProduct(soc_conn);
 				break;
 			case 3:
 				bzero(msg, sizeof(msg));
@@ -220,19 +200,20 @@ void showSellerMenu(int soc_conn) {
 }
 
 void writeNoInput(int soc_conn, char writeThis[1024]) {
+	
+	//This function writes a string to the client
+	//It is called by many different functions to cut down on the number of lines of code
+	
 	char msg[1024];
 	bzero(msg, sizeof(msg));
 	strcat(msg, writeThis);
 	write(soc_conn, msg, sizeof(msg));
 	return;
 }
-	
-
-
 
 void showBuyerMenu(int soc_conn) {
 	
-	//This function shows the available options to buyers and then calls the functions for those options
+	//This function shows the available options to buyers and then implements the functions for those options
 	//This function is called by buyerOrSeller()
 	
 	//Likely will loop this menu so a user can do multiple actions consecutively
