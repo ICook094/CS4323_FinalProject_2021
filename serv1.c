@@ -1,15 +1,22 @@
+/*
+//Group G
+//Sagar Sawant
+//A11524117
+//sagar.sawant@okstate.edu
+//Description: Creating a program which allows us to create mutiple servers and connect them to clients
+// This lets you input the number of servers to be started and how many clients each server can handle*/
+
+
 #define MAXLINE 1024
 #include "handler.c"
 struct serv_info * info_s;
 
 
-// Driver code
+
 int main(int argc, char *argv[]) {
 
-        //this command line will give us number of servers to run in parallel
-        //this command line will also tell us about maximum number of threads
-        //each server thread will handle
-        //it will also tell about starting port
+        //This gives us the number of servers and threads per server that will connect to the clients
+		//Each client can is connected with thread to the server 
 
         if(argc < 4){
                 printf("Format is Server.out [starting port] [serv_count] [num_th]\n");
@@ -42,4 +49,3 @@ int main(int argc, char *argv[]) {
 
         return 0;
 }
-

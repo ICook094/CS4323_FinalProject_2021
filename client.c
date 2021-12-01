@@ -1,3 +1,10 @@
+/*
+//Group G
+//Sagar Sawant and Scott Schwager
+//A11524117
+//sagar.sawant@okstate.edu
+//Description:This program deals with the client side and of connection with the server*/
+
 #include <stdio.h>
 #include <netdb.h>
 #include <unistd.h>
@@ -31,12 +38,6 @@ void comms(int soc_conn)
 		} else {
 			printf("%s", msg);
 		}
-		
-		//Below is Sagar's code for getting input but it confused me so I did input a different way (see above) -Scott
-		/*bzero(msg, sizeof(msg));
-		n = 0;
-        while ((msg[n++] = getchar()) != '\n');
-		write(soc_conn, msg, sizeof(msg));*/
     }
 }
 
@@ -49,7 +50,7 @@ int main(int argc, char * argv[])
 
     port_num = argc > 2 ? atoi(argv[2]) : 0;
 	 if (!port_num) {
-        printf("Please enter Server port: ");
+        printf("Please enter an available Server port no.: ");
         scanf("%d", &port_num);
     }
 

@@ -1,6 +1,15 @@
+/*
+//Group G
+//Sagar Sawant 
+//A11524117
+//sagar.sawant@okstate.edu
+//Description: This program handles the server and client communication. 
+//It also allows us to access the server menu and start up structures*/
+
 #include "global.h"
-#include "databaseFunctions.h"
-//#include "databaseFunctions.h"
+#include "databaseFunctions.c"
+#include "servermenu.c"
+#include "database.c"
 #define MAXLINE 1024
 //Server thread
 //Each client will get a separate Server thread to communicate
@@ -15,12 +24,15 @@ void * handler_cli(void * h){
         int port = info_c->port;
         char * IPaddr = info_c->IPaddr;
 		
-        
-        startupStructures();	//Function is in databaseFunction.c
-		buyerOrSeller(soc_conn);	//Sends the execution to servermenu.c to navigate through the menus
+        //Function is in databaseFunction.c
+        startupStructures();
+		//Sends the execution to servermenu.c to navigate through the menus
+		buyerOrSeller(soc_conn);	//This function is in servermenu.c
+		//When the user is done in the menus, the execution will return here
+		//We need the execution to return here so the code below can close the connection and free up memory
 		
 		
-		//printf("started closing things\n");
+		printf("started closing things\n");
 		close(soc_conn);
         info_c->verify[m] = -1;
         info_c->verify = NULL;
@@ -44,7 +56,7 @@ void * handler_serv(void * h){
         char msg[MAXLINE];
         struct sockaddr_in addr_s, addr_c;
 
-        // Creating socket file descriptor
+        // Socket creation
 
         if ( (fd_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0 ) {
                 perror("socket creation failed");
@@ -54,12 +66,12 @@ void * handler_serv(void * h){
         memset(&addr_s, 0, sizeof(addr_s));
         memset(&addr_c, 0, sizeof(addr_c));
 
-        // Filling server information
+        // Server connectivity information
         addr_s.sin_family = AF_INET; // IPv4
         addr_s.sin_addr.s_addr = INADDR_ANY;//IP
         addr_s.sin_port = htons(port); //Port
 
-        // Bind the socket with the server address
+        // Binding the socket with server info
         if ( bind(fd_socket, (const struct sockaddr *)&addr_s, sizeof(addr_s)) < 0 )
         {
                 perror("bind failed");
@@ -71,10 +83,15 @@ void * handler_serv(void * h){
         int m = 0;
 
 	printf("\nServer with port %d started\n", port);
-
+		/////////////////////////////////////////////////DEADLOCK FIX///////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
         while(1){
-				
-				 if(count_th(verify, num_th) < num_th){
+				// ******* By adding the equal to sign we can have multiple clients join in. It is not limited******///
+				//******** Remove the equal to sign to have deadlock where a client can possibly go into starvation****//////
+				if(count_th(verify, num_th) <= num_th){      
 
                         int len = sizeof(addr_c);
                         int fd_1 = accept(fd_socket, (struct sockaddr *)&addr_c, &len);
@@ -92,7 +109,7 @@ void * handler_serv(void * h){
 						
                         pthread_create(&serv_th[m], NULL, handler_cli, (void *)info_c);
 				 }
+				 
 
                 }
 }
-
