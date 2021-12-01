@@ -126,8 +126,11 @@ int checkCustomerExists(char name[]){
  *  and the amount of product bought is removed from the database.
  */
 void newOrder(int productID, int quantity){
-    pthread_mutex_lock(&lockProductTable);
     pthread_mutex_lock(&lockOrderTable);
+    //to show deadlock
+    sleep(5);
+    pthread_mutex_lock(&lockProductTable);
+    
 
     //create order
     Order newOrder;
@@ -157,9 +160,8 @@ void newOrder(int productID, int quantity){
 
     newBill.orderPrice = newOrder.totalPrice;
 
-    pthread_mutex_unlock(&lockOrderTable);
     pthread_mutex_unlock(&lockProductTable);
- 
+    pthread_mutex_unlock(&lockOrderTable);
 
     //add order to the bill.
     addBillingToTable(newBill, tableOfBillings);
@@ -177,6 +179,8 @@ void newOrder(int productID, int quantity){
 void returnOrder(int orderID){
     pthread_mutex_lock(&lockBillingTable);
     pthread_mutex_lock(&lockOrderTable);
+    //to show deadlock
+    sleep(5);    
     pthread_mutex_lock(&lockProductTable);
 
     sleep(10);
