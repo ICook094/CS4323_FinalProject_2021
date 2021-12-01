@@ -429,7 +429,7 @@ void viewProductsAvailable(){
     for(int i = 0; i < tableOfProducts->count; i++)
     {
         Product product = tableOfProducts->entries[i];
-        printf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
+        sprintf("Product ID: %d\nQuantity Available: %d\nPrice: %f\n\nDescription: %s",
                 product.productID,
                 product.numAvailable,
                 product.price,
@@ -440,7 +440,9 @@ void viewProductsAvailable(){
     pthread_mutex_unlock(&lockProductTable);
 }
 
-void viewProductsForSeller(int sellerID, int soc_conn){
+void viewProductsForSeller(int soc_conn){
+    int sellerID = sellerInfo.sellerID;
+
     pthread_mutex_lock(&lockProductTable);
     //for all products if sellerID matches then print out
     for(int i = 0; i < tableOfProducts->count; i++)
@@ -476,7 +478,7 @@ void viewOrdersForProducts(int productID, int soc_conn)
             Order order = tableOfOrders->entries[i]; // get product with billing information
             
             char msg[500];
-            printf(msg, "Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\nDelivery Address: %s\n",
+            sprintf(msg, "Order ID: %d\nQuantity Purchased: %d\nTotal Order Price: %f\nDelivery Address: %s\n",
                 order.orderID,
                 order.numPurchased,
                 order.totalPrice,

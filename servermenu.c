@@ -187,12 +187,8 @@ void showSellerMenu(int soc_conn) {
 				updateProductPrice(updatePriceProductID, newPrice);
 				break;
 			case 6:
-				writeNoInput(soc_conn, "Please enter your Seller ID to view the products you offer:\n");
-				write(soc_conn, "input", sizeof("input"));
-				bzero(msg, sizeof(msg));
-				read(soc_conn, msg, sizeof(msg));
 				writeNoInput(soc_conn, "These are the products that you offer:\n");
-				viewProductsForSeller(atoi(msg), soc_conn);
+				viewProductsForSeller(soc_conn);
 				break;
 			case 7:
 				writeNoInput(soc_conn, "Please enter the Product ID to view that product's orders:\n");
