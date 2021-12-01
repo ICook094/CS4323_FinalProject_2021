@@ -85,7 +85,7 @@ void * handler_serv(void * h){
 		
 		
         while(1){
-				if(count_th(verify, num_th) < num_th){      
+				if(count_th(verify, num_th) <= num_th){      
 
                         int len = sizeof(addr_c);
                         int fd_1 = accept(fd_socket, (struct sockaddr *)&addr_c, &len);
