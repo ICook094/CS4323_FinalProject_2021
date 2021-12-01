@@ -278,8 +278,8 @@ BillingTable * initBillings()
 void addBillingToTable(BillingInfo toAdd, BillingTable * table)
 {
     pthread_mutex_lock(&lockBillingTable);
-    table->entries[table->count - 1] = toAdd;
     table->count++;
+    table->entries[table->count - 1] = toAdd;
     pthread_mutex_unlock(&lockBillingTable);
 }
 
@@ -331,7 +331,7 @@ int saveBillings(BillingTable table)
     for(int i = 0; i < table.count; i++)
     {
         char entry[500] = "";
-        sprintf(entry, "%i,%d,%s,%f\n",
+        sprintf(entry, "%i,%i,%s,%f\n",
             table.entries[i].orderID,
             table.entries[i].customerID,
             table.entries[i].billingAddress,
