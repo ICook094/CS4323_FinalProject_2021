@@ -1,3 +1,8 @@
+/*
+Author: Cole
+Group G
+cole.hutson@okstate.edu
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
