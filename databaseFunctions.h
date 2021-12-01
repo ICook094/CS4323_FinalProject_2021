@@ -54,7 +54,7 @@ void viewBillingInfo(int customerID, int soc_conn);
 
 void viewProductsAvailable();
 
-void viewProductsForSeller(int sellerID, int soc_conn);
+void viewProductsForSeller(int soc_conn);
 
 void viewOrdersForProducts(int productID, int soc_conn);
 
