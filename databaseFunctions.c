@@ -1,3 +1,8 @@
+/**
+ * Group G
+ * Isabell Cook
+ * icook@okstate.edu
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,9 +29,12 @@ pthread_mutex_t lockProductTable;
 pthread_mutex_t lockSellerTable;
 
 /**
- * Argument:
- * Return:
- * 
+ * Argument: NULL
+ * Return: void
+ * Description: 
+ *  This function calls all of the functions needed to start up the "database".
+ *  Table structures defined globaly are initialized then the contents stored in the files
+ *  are loaded into the corresponding structures
  */
 //Does not need Mutex Locks
 void startupStructures(){
@@ -37,7 +45,7 @@ void startupStructures(){
     tableOfProducts = initProducts();
     tableOfSellers = initSellers();
     
-
+    //Load information from each text file
     loadBillings(tableOfBillings);
     loadCustomers(tableOfCustomers);
     loadOrders(tableOfOrders);
@@ -46,9 +54,14 @@ void startupStructures(){
 
 }
 
-
+/**
+ * Argument: NULL
+ * Return: void
+ * Description: 
+ *  This function calls the necessary methods in order to save all of the global
+ *  structs that make up the database into their respective text files.
+ */
 void saveStructuresToFiles(){
-
     saveBillings(*tableOfBillings);
     saveCustomers(*tableOfCustomers);
     saveOrders(*tableOfOrders);
@@ -56,12 +69,19 @@ void saveStructuresToFiles(){
     saveSellers(*tableOfSellers);
 }
 
-//Mutex Locked
+/**
+ * Argument: char []
+ * Return: int
+ * Description: 
+ *  This function takes in the name of a seller and checks to see if the name
+ *  already exists in the database.
+ */
 int checkSellerExists(char name[]){
 
     pthread_mutex_lock(&lockSellerTable);
 
     int count = tableOfSellers->count;
+    //for each entry in the table compare the sellers name and the name given
     for (int i = 0; i < count; i++){
         if (strcmp(tableOfSellers->entries[i].name, name) == 0){
             sellerInfo = tableOfSellers->entries[i];
@@ -73,11 +93,19 @@ int checkSellerExists(char name[]){
     return 0;
 }
 
+/**
+ * Argument: char []
+ * Return: int
+ * Description: 
+ *  This function takes in the name of a customer and checks to see if the name
+ *  already exists in the database.
+ */
 int checkCustomerExists(char name[]){
 
     pthread_mutex_lock(&lockCustomerTable);
 
     int count = tableOfCustomers->count;
+    //for each entry in the table compare the customers name and the name given
     for (int i = 0; i < count; i++){
         if (strcmp(tableOfCustomers->entries[i].name, name) == 0){
             customerInfo = tableOfCustomers->entries[i];
@@ -89,44 +117,59 @@ int checkCustomerExists(char name[]){
     return 0;
 }
 
-//purchase a product option 2 in showBuyerMenu
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  This function is for option 2 in showBuyerMenu.
+ *  When a customer makes a purchase, a new order and bill is created,
+ *  and the amount of product bought is removed from the database.
+ */
 void newOrder(int productID, int quantity){
+    //create order
     Order newOrder;
     newOrder.productID = productID;
     newOrder.numPurchased = quantity;
     strcpy(newOrder.deliveryAddress, customerInfo.address);
 
+    //find the product and remove the number bought from the products database
     pthread_mutex_lock(&lockProductTable);
     Product product = tableOfProducts->entries[productID];
     product.numAvailable -= quantity;
     tableOfProducts->entries[productID].numAvailable = product.numAvailable;
     pthread_mutex_unlock(&lockProductTable);
 
-    
-
+    //find the total price
     newOrder.totalPrice = quantity * product.price;
     
+    //add order to the database
     addOrderToTable(newOrder, tableOfOrders);
 
+    //create a new bill
     BillingInfo newBill;
     newBill.customerID = customerInfo.customerID;
     strcpy(newBill.billingAddress, customerInfo.address);
-    
     pthread_mutex_lock(&lockOrderTable);
     newBill.orderID = tableOfOrders->count - 1;
     pthread_mutex_unlock(&lockOrderTable);
-    
     newBill.orderPrice = newOrder.totalPrice;
 
+    //add order to the bill.
     addBillingToTable(newBill, tableOfBillings);
 }
 
-
-//return a product option 3 in showBuyerMenu
-//delete order and billing struct
-//return products to availability
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  This function is for option 3 in showBuyerMenu.
+ *  When a customer returns a product, the order and bill associated with
+ *  that purchase is removed, and the amount of product being returned is
+ *  added back to the products database.
+ */
 void returnOrder(int orderID){
 
+    //Find order in database.
     pthread_mutex_lock(&lockOrderTable);
     Order orderToReturn;
     int orderCount = tableOfOrders->count;
@@ -175,6 +218,12 @@ void returnOrder(int orderID){
     pthread_mutex_unlock(&lockBillingTable);
 }
 
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  Adds new product from sellers into the databse structures
+ */
 void addProduct(int soc_conn){
     Product newProduct;
 
@@ -208,18 +257,25 @@ void addProduct(int soc_conn){
     //assign the sellerID
     newProduct.sellerID = sellerInfo.sellerID;
 
+    //add product to database
     addProductToTable(newProduct, tableOfProducts);
 }
 
-
-
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  Removing a product from the database/from being available to sell
+ *  by the seller. The product is found in the database and is removed
+ */
 void removeProduct(int productID){
     pthread_mutex_lock(&lockProductTable);
 
     int count = tableOfProducts->count;
+    //find the product entry that matched the product ID given
     for(int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
-            //entries may need to be an array
+            //move all products behind the product being removed up on in the array.
             for (int j = i; j < count; j++){
                 tableOfProducts->entries[i] = tableOfProducts->entries[i+1];
                 break;
@@ -227,17 +283,27 @@ void removeProduct(int productID){
         }
 
     }
+    //decrease count of database
     tableOfProducts->count--;
 
     pthread_mutex_unlock(&lockProductTable);
 }
 
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  This is the function that changed the quantity the seller wants to sell of 
+ *  a product.
+ */
 void updateProductQuantity(int productID, int quantity){
     pthread_mutex_lock(&lockProductTable);
     
     int count = tableOfProducts->count;
+    //find product corresponding to given ID
     for (int i = 0; i < count; i++){
         if (tableOfProducts->entries[i].productID == productID){
+            //change the quantity
             tableOfProducts->entries[i].numAvailable = quantity;
             break;
         }
@@ -245,12 +311,20 @@ void updateProductQuantity(int productID, int quantity){
     pthread_mutex_unlock(&lockProductTable);
 }
 
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  This function changes the price that a seller wants to sell their product at.
+ */
 void updateProductPrice(int productID, int newPrice){
     pthread_mutex_lock(&lockProductTable);
 
     int count = tableOfProducts->count;
+    //find product matching the given ID
     for (int i = 0; i < count; i++){
         if(tableOfProducts->entries[i].productID == productID){
+            //change the price of said product
             tableOfProducts->entries[i].price = newPrice;
             break;
         }
@@ -259,8 +333,14 @@ void updateProductPrice(int productID, int newPrice){
     pthread_mutex_unlock(&lockProductTable);
 }
 
-//TODO
-//replace case one in showSellerMenu() maybe make global seller struct
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  This function allows the seller to change either their name, phone number, or address.
+ *  Sellers are not allowed to change their ID because that corresponds to their place as an
+ *  entry in the database
+ */
 void updateSellerInformation(int soc_conn){
     char msg[1024];
     strcpy(msg, "What information would you like to update?\n");
@@ -319,8 +399,14 @@ void updateSellerInformation(int soc_conn){
 	return;
 }
 
-//TODO
-//replace case one in showBuyerMenu() maybe make global buyer struct
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  This function allows the customer to change either their name, phone number, or address.
+ *  Customers are not allowed to change their ID because that corresponds to their place as an
+ *  entry in the database
+ */
 void updateCustomerInformation(int soc_conn){
 	
 	char msg[1024];
@@ -380,8 +466,12 @@ void updateCustomerInformation(int soc_conn){
 	return;
 }
 
-//create local order for said buyer and pass that into the function.
-//option 5 showBuyerMenu
+/**
+ * Argument: char [], int
+ * Return: void
+ * Description: 
+ *  This function allows customers to view all products that they have purchased. 
+ */
 void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
     pthread_mutex_lock(&lockOrderTable);
 
@@ -407,7 +497,13 @@ void viewOrdersAsCustomer(char CustomerAddress[], int soc_conn){
     pthread_mutex_unlock(&lockOrderTable);
 }
 
-//option 6 showBuyerMenu
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  Option 6 in showBuyerMenu
+ *  This function allows customers to view their billing information
+ */
 void viewBillingInfo(int customerID, int soc_conn){
     pthread_mutex_lock(&lockBillingTable);
     int count = tableOfBillings->count;
@@ -430,6 +526,12 @@ void viewBillingInfo(int customerID, int soc_conn){
     pthread_mutex_unlock(&lockBillingTable);
 }
 
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  This is where all products available for sell are sent to the client's terminal to be printed.
+ */
 void viewProductsAvailable(int soc_conn){
     pthread_mutex_lock(&lockProductTable);
     //print out all available products and their quantity and price
@@ -451,6 +553,12 @@ void viewProductsAvailable(int soc_conn){
 	return;
 }
 
+/**
+ * Argument: int
+ * Return: void
+ * Description: 
+ *  This allows sellers to see what products they have up for sell
+ */
 void viewProductsForSeller(int soc_conn){
     int sellerID = sellerInfo.sellerID;
 
@@ -477,6 +585,12 @@ void viewProductsForSeller(int soc_conn){
 	return;
 }
 
+/**
+ * Argument: int, int
+ * Return: void
+ * Description: 
+ *  This allows the seller to see how many orders they have for their products.
+ */
 void viewOrdersForProducts(int productID, int soc_conn)
 {   
     pthread_mutex_lock(&lockOrderTable);

@@ -330,6 +330,8 @@ int saveBillings(BillingTable table)
     pthread_mutex_lock(&lockBillingTable);
     for(int i = 0; i < table.count; i++)
     {
+        if(table.entries[i].orderID < 0) break;
+
         char entry[500] = "";
         sprintf(entry, "%i,%i,%s,%f\n",
             table.entries[i].orderID,
