@@ -25,6 +25,8 @@ How to Run Program:
     Client:
         ./client
 
+WARNING when entering information into the program avoid the use of a space
+
 Known Bugs:
     - A segmentation fault may happen after several restarts of the program, we were not able to identify the cause of this issue
     - The program will sometimes randomly issue a segmentation fault for seemlingly no reason this may be because of improper memory management
