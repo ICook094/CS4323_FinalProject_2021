@@ -126,6 +126,9 @@ int checkCustomerExists(char name[]){
  *  and the amount of product bought is removed from the database.
  */
 void newOrder(int productID, int quantity){
+    pthread_mutex_lock(&lockProductTable);
+    pthread_mutex_lock(&lockOrderTable);
+
     //create order
     Order newOrder;
     newOrder.productID = productID;
@@ -133,11 +136,11 @@ void newOrder(int productID, int quantity){
     strcpy(newOrder.deliveryAddress, customerInfo.address);
 
     //find the product and remove the number bought from the products database
-    pthread_mutex_lock(&lockProductTable);
+    
     Product product = tableOfProducts->entries[productID];
     product.numAvailable -= quantity;
     tableOfProducts->entries[productID].numAvailable = product.numAvailable;
-    pthread_mutex_unlock(&lockProductTable);
+    
 
     //find the total price
     newOrder.totalPrice = quantity * product.price;
@@ -149,10 +152,14 @@ void newOrder(int productID, int quantity){
     BillingInfo newBill;
     newBill.customerID = customerInfo.customerID;
     strcpy(newBill.billingAddress, customerInfo.address);
-    pthread_mutex_lock(&lockOrderTable);
+    
     newBill.orderID = tableOfOrders->count - 1;
-    pthread_mutex_unlock(&lockOrderTable);
+
     newBill.orderPrice = newOrder.totalPrice;
+
+    pthread_mutex_unlock(&lockOrderTable);
+    pthread_mutex_unlock(&lockProductTable);
+ 
 
     //add order to the bill.
     addBillingToTable(newBill, tableOfBillings);
@@ -168,9 +175,14 @@ void newOrder(int productID, int quantity){
  *  added back to the products database.
  */
 void returnOrder(int orderID){
+    pthread_mutex_lock(&lockBillingTable);
+    pthread_mutex_lock(&lockOrderTable);
+    pthread_mutex_lock(&lockProductTable);
+
+    sleep(10);
 
     //Find order in database.
-    pthread_mutex_lock(&lockOrderTable);
+ 
     Order orderToReturn;
     int orderCount = tableOfOrders->count;
     for (int i = 0; i < orderCount; i++){
@@ -179,9 +191,9 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockOrderTable);
 
-    pthread_mutex_lock(&lockProductTable);
+
+
     //return products purshased to products available
     int productCount = tableOfProducts->count;
     for (int i = 0; i < productCount; i++){
@@ -190,9 +202,6 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockProductTable);
-
-    pthread_mutex_lock(&lockOrderTable);
     //delete order from orderTable
     for (int i = 0; i < orderCount; i++){
         if(tableOfOrders->entries[i].orderID == orderToReturn.orderID){
@@ -202,9 +211,8 @@ void returnOrder(int orderID){
             break;
         }
     }
-    pthread_mutex_unlock(&lockOrderTable);
 
-    pthread_mutex_lock(&lockBillingTable);
+    
     //delete bill correspondint to order from billingTable
     int billingCount = tableOfBillings->count;
     for (int i = 0; i < billingCount; i++){
@@ -216,6 +224,8 @@ void returnOrder(int orderID){
         }
     }
     pthread_mutex_unlock(&lockBillingTable);
+    pthread_mutex_unlock(&lockProductTable);
+    pthread_mutex_unlock(&lockOrderTable);
 }
 
 /**
