@@ -82,15 +82,10 @@ void * handler_serv(void * h){
         int m = 0;
 
 	printf("\nServer with port %d started\n", port);
-		/////////////////////////////////////////////////DEADLOCK FIX///////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
         while(1){
-				// ******* By adding the equal to sign we can have multiple clients join in. It is not limited******///
-				//******** Remove the equal to sign to have deadlock where a client can possibly go into starvation****//////
-				if(count_th(verify, num_th) <= num_th){      
+				if(count_th(verify, num_th) < num_th){      
 
                         int len = sizeof(addr_c);
                         int fd_1 = accept(fd_socket, (struct sockaddr *)&addr_c, &len);

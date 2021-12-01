@@ -18,14 +18,6 @@ cole.hutson@okstate.edu
 // the maximum entries allowed per table
 #define MAX_ENTRIES 500
 
-#include <pthread.h>
-
-extern pthread_mutex_t lockBillingTable;
-extern pthread_mutex_t lockCustomerTable;
-extern pthread_mutex_t lockOrderTable;
-extern pthread_mutex_t lockProductTable;
-extern pthread_mutex_t lockSellerTable;
-
 // database data definitions
 typedef struct sellerInformation 
 {

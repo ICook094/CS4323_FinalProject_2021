@@ -24,10 +24,8 @@ SellerTable * initSellers()
 // table - the table to add the entry into
 void addSellerToTable(Seller toAdd, SellerTable * table)
 {
-    pthread_mutex_lock(&lockSellerTable);
     toAdd.sellerID = table->count++;
     table->entries[table->count - 1] = toAdd;
-    pthread_mutex_unlock(&lockSellerTable);
 }
 
 //loads all sellers as text from file sellerinforamtion.txt and adds them to the table as a structure
@@ -74,7 +72,6 @@ int saveSellers(SellerTable table)
 {
     FILE *sellerFile = fopen(SELLERDB, "w"); // open the file in write mode
 
-    pthread_mutex_lock(&lockSellerTable);
     for (int i = 0; i < table.count; i++)
     {
         if (table.entries[i].sellerID < 0)
@@ -89,7 +86,6 @@ int saveSellers(SellerTable table)
 
         fputs(entry, sellerFile);
     }
-    pthread_mutex_unlock(&lockSellerTable);
 
     fclose(sellerFile);
     return 0;
@@ -111,10 +107,8 @@ CustomerTable * initCustomers()
 // table - the table to add the entry into
 void addCustomerToTable(Customer toAdd, CustomerTable * table)
 {
-    pthread_mutex_lock(&lockCustomerTable);
     toAdd.customerID = table->count++;
     table->entries[table->count - 1] = toAdd;
-    pthread_mutex_unlock(&lockCustomerTable);
 }
 
 //loads all customers as text from file customerinformation.txt and adds them to the table as a structure
@@ -159,7 +153,6 @@ int saveCustomers(CustomerTable table)
 {
     FILE * customerFile = fopen(CUSTOMERDB, "w"); // open the file in write mode
     
-    pthread_mutex_lock(&lockCustomerTable);
     for(int i = 0; i < table.count; i++)
     {
         if(table.entries[i].customerID < 0) break; //there should not be an id with a value of 0 or less
@@ -174,7 +167,6 @@ int saveCustomers(CustomerTable table)
 
         fputs(entry, customerFile);
     }
-    pthread_mutex_unlock(&lockCustomerTable);
 
     fclose(customerFile);
     return 0;
@@ -195,10 +187,8 @@ ProductTable * initProducts()
 // table - the table to add the entry into
 void addProductToTable(Product toAdd, ProductTable * table)
 {
-    pthread_mutex_lock(&lockProductTable);
     toAdd.productID = table->count++;
     table->entries[table->count - 1] = toAdd;
-    pthread_mutex_unlock(&lockProductTable);
 }
 
 //loads all products as text from file productinformation.txt and adds them to the table as a structure
@@ -245,7 +235,6 @@ int saveProducts(ProductTable table)
 {
     FILE * productFile = fopen(PRODUCTDB, "w"); // open the file in write mode
     
-    pthread_mutex_lock(&lockProductTable);
     for(int i = 0; i < table.count; i++)
     {
         if(table.entries[i].productID < 0) break; //there should not be an id with a value of 0 or less
@@ -261,7 +250,6 @@ int saveProducts(ProductTable table)
 
         fputs(entry, productFile);
     }
-    pthread_mutex_unlock(&lockProductTable);
 
     fclose(productFile);
     return 0;
@@ -282,10 +270,8 @@ BillingTable * initBillings()
 // table - the table to add the entry into
 void addBillingToTable(BillingInfo toAdd, BillingTable * table)
 {
-    pthread_mutex_lock(&lockBillingTable);
     table->count++;
     table->entries[table->count - 1] = toAdd;
-    pthread_mutex_unlock(&lockBillingTable);
 }
 
 //loads all billings as text from file billingsinformation.txt and adds them to the table as a structure
@@ -332,7 +318,6 @@ int saveBillings(BillingTable table)
 {
     FILE * billingFile = fopen(BILLINGDB, "w"); // open the file in write mode
     
-    pthread_mutex_lock(&lockBillingTable);
     for(int i = 0; i < table.count; i++)
     {
         if(table.entries[i].orderID < 0) break;
@@ -347,7 +332,6 @@ int saveBillings(BillingTable table)
 
         fputs(entry, billingFile);
     }
-    pthread_mutex_unlock(&lockBillingTable);
 
     fclose(billingFile);
     return 0;
@@ -368,10 +352,8 @@ OrderTable * initOrders()
 // table - the table to add the entry into
 void addOrderToTable(Order toAdd, OrderTable * table)
 {
-    pthread_mutex_lock(&lockOrderTable);
     toAdd.orderID = table->count++;
     table->entries[table->count - 1] = toAdd;
-    pthread_mutex_unlock(&lockOrderTable);
 }
 
 
@@ -419,7 +401,6 @@ int saveOrders(OrderTable table)
 {
     FILE * orderFile = fopen(ORDERDB, "w"); // open the file in write mode
     
-    pthread_mutex_lock(&lockOrderTable);
     for(int i = 0; i < table.count; i++)
     {
         char entry[1000] = "";
@@ -433,7 +414,6 @@ int saveOrders(OrderTable table)
 
         fputs(entry, orderFile);
     }
-    pthread_mutex_unlock(&lockOrderTable);
 
     fclose(orderFile);
     return 0;
