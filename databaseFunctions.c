@@ -439,7 +439,7 @@ void viewProductsAvailable(int soc_conn){
                 product.description
                 );
 
-		writeNoInput(soc_conn, msg);
+	writeNoInput(soc_conn, msg);
     }
 
     pthread_mutex_unlock(&lockProductTable);
