@@ -396,6 +396,12 @@ void updateSellerInformation(int soc_conn){
     {
         printf("Invalid Input. Try Again.\n");
     }
+
+    //Send local seller information to database
+    pthread_mutex_lock(&lockSellerTable);
+    tableOfSellers->entries[sellerInfo.sellerID] = sellerInfo;
+    pthread_mutex_unlock(&lockSellerTable);
+
 	return;
 }
 
@@ -463,6 +469,12 @@ void updateCustomerInformation(int soc_conn){
     {
         printf("Invalid Input. Try Again.\n");
     }
+
+    //Send local seller information to database
+    pthread_mutex_lock(&lockCustomerTable);
+    tableOfCustomers->entries[customerInfo.customerID] = customerInfo;
+    pthread_mutex_unlock(&lockCustomerTable);
+
 	return;
 }
 

@@ -7,9 +7,8 @@
 //It also allows us to access the server menu and start up structures*/
 
 #include "global.h"
-#include "databaseFunctions.c"
-#include "servermenu.c"
-#include "database.c"
+#include "databaseFunctions.h"
+#include "database.h"
 #define MAXLINE 1024
 //Server thread
 //Each client will get a separate Server thread to communicate
