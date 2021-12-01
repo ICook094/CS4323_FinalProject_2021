@@ -20,7 +20,7 @@ void * handler_cli(void * h){
 		buyerOrSeller(soc_conn);	//Sends the execution to servermenu.c to navigate through the menus
 		
 		
-		printf("started closing things\n");
+		//printf("started closing things\n");
 		close(soc_conn);
         info_c->verify[m] = -1;
         info_c->verify = NULL;
