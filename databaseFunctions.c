@@ -23,6 +23,11 @@ pthread_mutex_t lockOrderTable;
 pthread_mutex_t lockProductTable;
 pthread_mutex_t lockSellerTable;
 
+/**
+ * Argument:
+ * Return:
+ * 
+ */
 //Does not need Mutex Locks
 void startupStructures(){
     //initialize structures that hold all the information
@@ -92,12 +97,14 @@ void newOrder(int productID, int quantity){
     strcpy(newOrder.deliveryAddress, customerInfo.address);
 
     pthread_mutex_lock(&lockProductTable);
-    Product * product = &(tableOfProducts->entries[productID]);
+    Product product = tableOfProducts->entries[productID];
+    product.numAvailable -= quantity;
+    tableOfProducts->entries[productID].numAvailable = product.numAvailable;
     pthread_mutex_unlock(&lockProductTable);
 
-    product->numAvailable -= quantity;
+    
 
-    newOrder.totalPrice = quantity * product->price;
+    newOrder.totalPrice = quantity * product.price;
     
     addOrderToTable(newOrder, tableOfOrders);
 
